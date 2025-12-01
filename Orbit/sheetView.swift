@@ -264,17 +264,31 @@ struct sheetView: View {
                             // VOICE BUTTON
                             Button(action: {
 
-                            }) {
-                                Image(systemName: "mic.fill")
-                                    .font(.system(size: 20))
-                                    .foregroundColor(.white)
-                                    .padding(10)
-                                    .background(Color.btn)
-                                    .clipShape(Circle())
-                                    .shadow(radius: 3)
-                            }
-                            .padding(.leading, 12)
-                            .padding(.bottom, 45)
+                                   // -----------------------------
+                                   // VOICE BUTTON OVERLAY
+                                   // -----------------------------
+                                   Button(action: {
+                                       // TODO: trigger recording logic
+                                   }) {
+                                       
+                                   }
+                                   .padding(.leading, 12)
+                                   .padding(.bottom, 45)
+                               }
+                           }
+                        // ----------------------
+                        // SUBMIT BUTTON
+                        // ----------------------
+                        Button(action: {
+                            print("Task saved: \(name)")
+                        }) {
+                            Text("حفظ")
+                                .font(.system(size: 18, weight: .bold))
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.btn)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
                         }
                     }
                     
