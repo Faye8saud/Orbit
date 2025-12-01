@@ -7,7 +7,7 @@
 
 
 import SwiftUI
-
+import SwiftData
 struct MenuItem: Identifiable {
     let id = UUID()
     let icon: String
@@ -16,7 +16,15 @@ struct MenuItem: Identifiable {
     let distance: CGFloat
     let action: () -> Void
 }
+private var todayString: String {
+    let formatter = DateFormatter()
 
+    formatter.locale = Locale(identifier: "en_US")
+
+    formatter.calendar = Calendar(identifier: .gregorian)
+    formatter.dateFormat = "d MMMM"
+    return formatter.string(from: Date())
+}
 
 struct CircularMenuView: View {
     let items: [MenuItem]
@@ -47,47 +55,30 @@ struct CircularMenuView: View {
 }
 
 struct HomeView: View {
+    @Environment(\.modelContext) private var context
+    @Query var allTasks: [TaskModel]
+
     @State private var showSheet = false
-    
-    let menuItems: [MenuItem] = [
 
-          MenuItem(
-              icon: "house.fill",
-              color: Color(.pinkc),
-              size: 60,
-              distance: 160
-          ) { print("Home") },
+    // Only today's tasks
+    private var todaysTasks: [TaskModel] {
+        let cal = Calendar.current
+        return allTasks.filter { cal.isDate($0.date, inSameDayAs: Date()) }
+    }
+    private var menuItems: [MenuItem] {
+        todaysTasks.map { task in
+            MenuItem(
+                icon: task.icon,
+                color: Color(task.taskColor),
+                size: CGFloat(task.size),
+                distance: CGFloat(task.distance),
+                action: {
+                    print("Tapped task: \(task.name)")
+                }
+            )
+        }
+    }
 
-          MenuItem(
-              icon: "person.fill",
-              color: Color(.lightbluec),
-              size: 80,
-              distance: 160
-          ) { print("Profile 1") },
-
-          MenuItem(
-              icon: "person.3.fill",
-              color: Color(.darkpinkc),
-              size: 110,
-              distance: 160
-          ) { print("Group") },
-
-          MenuItem(
-              icon: "doc.fill",
-              color: Color(.yellowc),
-              size: 60,
-              distance: 160
-          ) { print("Documents") },
-
-          MenuItem(
-              icon: "person.crop.circle.fill",
-              color: Color(.pinkc),
-              size: 80,
-              distance: 160
-          ) { print("Profile 2") }
-      ]
-
-        
     var body: some View {
         ZStack {
             Color(.background)
@@ -151,12 +142,13 @@ struct HomeView: View {
                 
                     .blur(radius: 1)
                 
-                Text("١٨ نوفمبر")
+                Text(todayString)
                     .font(.system(size: 32, weight: .medium))
                     .foregroundColor(Color.black.opacity(0.7))
                 
                 // Circular menu buttons
                 CircularMenuView(items: menuItems)
+
             }
             
             // bottom plus button
