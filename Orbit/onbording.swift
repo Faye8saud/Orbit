@@ -8,7 +8,7 @@
 import SwiftUI
      
 struct OnboardingView: View {
-    
+  
     private let pages: [OnboardingPage] = [
         OnboardingPage(
             title: "",
@@ -35,6 +35,7 @@ struct OnboardingView: View {
     }
     
     var body: some View {
+        NavigationStack {
         ZStack {
             Color("Background")
                 .ignoresSafeArea()
@@ -144,26 +145,25 @@ struct OnboardingView: View {
                                     radius: 10, x: 0, y: 2)
                         }
                     }else{
-                        HStack{
-                            Spacer()
-                            Button("Start"){
-                                
-                                print("start")
-                                
+                            HStack{
+                                Spacer()
+                                NavigationLink(destination: HomeView()) {
+                                    Text("Start")
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .frame(width: 200, height: 70)
+                                        .background(Color("Color"))
+                                        .foregroundColor(.white)
+                                        .cornerRadius(50)
+                                        .shadow(color: Color("Color").opacity(0.25), radius: 10, x: 0, y: 2)
+                                }
                             }
-                            .font(.system(size: 18, weight: .semibold))
-                            .frame(width: 200,height: 70)
-                            .background(Color("Color"))
-                            .foregroundColor(.white)
-                            .cornerRadius(50)
-                            .shadow(color: Color("Color").opacity(0.25),
-                                    radius: 10, x: 0, y: 2)
-                        }
+                        
                     }
                 }
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
             }
+        }
         }
     }
 }

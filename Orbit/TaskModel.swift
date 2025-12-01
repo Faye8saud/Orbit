@@ -2,16 +2,9 @@
 //  TaskModel.swift
 //  Orbit
 //
-//  Created by Hissah Alohali on 09/06/1447 AH.
+//  SwiftData model for tasks
 //
 
-
-//
-//  TaskModel.swift
-//  Orbit
-//
-//  Created by Hissah Alohali on 09/06/1447 AH.
-//
 import SwiftData
 import SwiftUI
 import Foundation
@@ -27,6 +20,7 @@ class TaskModel: Identifiable {
     var actionType: String   // example: "openProfile", "openTasks"
     var date: Date
     
+    // Computed properties using TaskHelpers
     var icon: String {
         TaskHelpers.icon(for: type)
     }
@@ -51,4 +45,3 @@ class TaskModel: Identifiable {
         self.date = date
     }
 }
-

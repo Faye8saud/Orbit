@@ -2,12 +2,13 @@
 //  homeView.swift
 //  Orbit
 //
-//  Created by Fay  on 25/11/2025.
+//  Updated with improved code reusability
 //
-
 
 import SwiftUI
 import SwiftData
+
+// MARK: - Menu Item Model
 struct MenuItem: Identifiable {
     let id = UUID()
     let icon: String
@@ -16,16 +17,19 @@ struct MenuItem: Identifiable {
     let distance: CGFloat
     let action: () -> Void
 }
-private var todayString: String {
-    let formatter = DateFormatter()
 
-    formatter.locale = Locale(identifier: "en_US")
-
-    formatter.calendar = Calendar(identifier: .gregorian)
-    formatter.dateFormat = "d MMMM"
-    return formatter.string(from: Date())
+// MARK: - Date Formatter Extension
+extension Date {
+    var todayString: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US")
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.dateFormat = "d MMMM"
+        return formatter.string(from: self)
+    }
 }
 
+// MARK: - Circular Menu View
 struct CircularMenuView: View {
     let items: [MenuItem]
 
@@ -54,9 +58,10 @@ struct CircularMenuView: View {
     }
 }
 
+// MARK: - Home View
 struct HomeView: View {
     @Environment(\.modelContext) private var context
-    @Query var allTasks: [TaskModel]
+    @Query(sort: \TaskModel.date) var allTasks: [TaskModel]
 
     @State private var showSheet = false
 
@@ -65,15 +70,18 @@ struct HomeView: View {
         let cal = Calendar.current
         return allTasks.filter { cal.isDate($0.date, inSameDayAs: Date()) }
     }
+    
+    // Convert tasks to menu items
     private var menuItems: [MenuItem] {
         todaysTasks.map { task in
             MenuItem(
                 icon: task.icon,
-                color: Color(task.taskColor),
+                color: task.taskColor,
                 size: CGFloat(task.size),
                 distance: CGFloat(task.distance),
                 action: {
                     print("Tapped task: \(task.name)")
+                    // TODO: Navigate to task detail
                 }
             )
         }
@@ -84,74 +92,32 @@ struct HomeView: View {
             Color(.background)
                 .ignoresSafeArea()
             
-            // top calender button
+            // Top calendar button
             VStack {
-                    HStack {
-                        Spacer()
-
-                        Button(action: {
-                           //action
-                        }) {
-                            Image(systemName: "calendar")
-                                .font(.system(size: 22, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(16)
-                                .glassEffect(.regular.tint(.btn).interactive())
-                                .clipShape(Circle())
-                                .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
-                        }
-                        .padding(.top, 20)
-                        .padding(.trailing, 20)
-                    }
+                HStack {
                     Spacer()
+
+                    Button(action: {
+                        // TODO: Calendar action
+                    }) {
+                        Image(systemName: "calendar")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(16)
+                            .glassEffect(.regular.tint(.btn).interactive())
+                            .clipShape(Circle())
+                            .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
+                    }
+                    .padding(.top, 20)
+                    .padding(.trailing, 20)
                 }
-
-            
-            // Center circle
-            ZStack {
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            gradient: Gradient(colors: [
-                                Color(.circleInner).opacity(1),
-                                Color(.circleOuter).opacity(0.2),
-                                Color(.circleOuter).opacity(0.2)
-                            ]),
-                            center: .center,
-                            startRadius: 20,
-                            endRadius: 200
-                        )
-                    )
-                    .frame(width: 300, height: 300)
-                    .blur(radius: 6)
-                
-             
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color(.circleInner).opacity(0.65),
-                                Color(.circleOuter).opacity(0.55)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .frame(width: 330, height: 330)
-                    .shadow(color: .black.opacity(0.2), radius: 12, x: 4, y: 8)
-                
-                    .blur(radius: 1)
-                
-                Text(todayString)
-                    .font(.system(size: 32, weight: .medium))
-                    .foregroundColor(Color.black.opacity(0.7))
-                
-                // Circular menu buttons
-                CircularMenuView(items: menuItems)
-
+                Spacer()
             }
+
+            // Center circle with date and tasks
+            centerCircleView
             
-            // bottom plus button
+            // Bottom plus button
             VStack {
                 Spacer()
                 HStack {
@@ -175,14 +141,69 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showSheet) {
             sheetView()
-                .presentationDetents([.large])  // custom height
+                .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
+        }
+        .onAppear {
+            printTaskDebugInfo()
         }
     }
     
+    // MARK: - Center Circle View
+    private var centerCircleView: some View {
+        ZStack {
+            Circle()
+                .fill(
+                    RadialGradient(
+                        gradient: Gradient(colors: [
+                            Color(.circleInner).opacity(1),
+                            Color(.circleOuter).opacity(0.2),
+                            Color(.circleOuter).opacity(0.2)
+                        ]),
+                        center: .center,
+                        startRadius: 20,
+                        endRadius: 200
+                    )
+                )
+                .frame(width: 300, height: 300)
+                .blur(radius: 6)
+            
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(.circleInner).opacity(0.65),
+                            Color(.circleOuter).opacity(0.55)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 330, height: 330)
+                .shadow(color: .black.opacity(0.2), radius: 12, x: 4, y: 8)
+                .blur(radius: 1)
+            
+            Text(Date().todayString)
+                .font(.system(size: 32, weight: .medium))
+                .foregroundColor(Color.black.opacity(0.7))
+            
+            // Circular menu buttons
+            CircularMenuView(items: menuItems)
+        }
+    }
+    
+    // MARK: - Debug Helper
+    private func printTaskDebugInfo() {
+        print("📊 Total tasks in database: \(allTasks.count)")
+        print("📅 Today's tasks: \(todaysTasks.count)")
+        
+        for task in allTasks {
+            print("  - \(task.name) | Type: \(task.type) | Date: \(task.date)")
+        }
+    }
 }
-
 
 #Preview {
     HomeView()
+        .modelContainer(for: TaskModel.self)
 }

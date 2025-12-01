@@ -2,10 +2,11 @@
 //  sheetView.swift
 //  Orbit
 //
-//  Created by Fay  on 26/11/2025.
+//  Fixed to properly save tasks to SwiftData
 //
 
 import SwiftUI
+import SwiftData
 
 struct TaskTypeButton: View {
     let icon: String
@@ -47,286 +48,317 @@ struct TaskTypeButton: View {
     }
 }
 
+struct TaskTypeCircle: View {
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        Circle()
+            .fill(color)
+            .frame(width: 120, height: 120)
+            .overlay(
+                Image(systemName: icon)
+                    .font(.system(size: 40))
+                    .foregroundColor(.white)
+            )
+            .shadow(radius: 5)
+    }
+}
 
+@ViewBuilder
+func typeButton(icon: String, label: String, color: Color, id: String, selectedType: Binding<String?>, action: @escaping () -> Void = {}) -> some View {
+    TaskTypeButton(
+        icon: icon,
+        label: label,
+        isSelected: selectedType.wrappedValue == id,
+        color: color
+    ) {
+        selectedType.wrappedValue = id
+        action()
+    }
+}
 
+// MARK: - Sheet View
 struct sheetView: View {
+    @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var selectedType: String? = "meeting"
     @State private var currentStep: Int = 1
-    
     
     @State private var name: String = ""
     @State private var date: Date = Date()
     @State private var time: Date = Date()
     @State private var description: String = ""
-
     
-    // --------------------------
-       let types: [String: TaskType] = [
-           "work": TaskType(id: "work", icon: "doc.fill", label: "عمل", color: .yellowc),
-           "meeting": TaskType(id: "meeting", icon: "person.3.fill", label: "اجتماع", color: .lightbluec),
-           "personal": TaskType(id: "personal", icon: "person.fill", label: "شخصي", color: .darkpinkc),
-           "home": TaskType(id: "home", icon: "house.fill", label: "منزل", color: .pinkc),
-           "other": TaskType(id: "other", icon: "ellipsis", label: "اخرى", color: .circleInner)
-       ]
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     var body: some View {
-        
-           ZStack {
-               Color(.background)
-                   .ignoresSafeArea()
-               
-               VStack {
-                   if currentStep == 1 {
-                       taskTypeSelectionView
-                           .transition(.move(edge: .leading))
-                   } else if currentStep == 2 {
-                       taskDetailsView
-                           .transition(.move(edge: .trailing))
-                   }
-               }
-               .animation(.easeInOut, value: currentStep)
-           }
-       }
-
-       // ----------------------------------
-       // MARK: STEP 1 VIEW
-       // ----------------------------------
-       var taskTypeSelectionView: some View {
-           VStack(spacing: 30) {
-               
-               Text("نوع المهمة")
-                   .font(.system(size: 28, weight: .bold))
-                   .padding(.top, 20)
-                   .foregroundColor(.btn)
-               
-               HStack(spacing: 60) {
-                   VStack{
-                       typeButton(icon: "doc.fill", label: "عمل", color: .yellowc, id: "work")
-                   }
-                   VStack{
-                       typeButton(icon: "person.3.fill", label: "اجتماع", color: .lightbluec, id: "meeting")
-                   }
-               }
-
-               HStack(spacing: 60) {
-                   VStack{
-                       typeButton(icon: "person.fill", label: "شخصي", color: .darkpinkc, id: "personal")
-                   }
-                   VStack{
-                       typeButton(icon: "house.fill", label: "منزل", color: .pinkc, id: "home")
-                   }
-               }
-
-               typeButton(icon: "ellipsis", label: "اخرى", color: .circleInner, id: "other")
-
-               Button {
-                   currentStep = 2      // ← NAVIGATE INSIDE SAME SHEET
-               } label: {
-                   HStack {
-                       Text("انتقل")
-                           .font(.system(size: 18, weight: .bold))
-                       Image(systemName: "arrow.right")
-                   }
-                   .padding()
-                   .frame(width: 140)
-                   .background(Color.btn)
-                   .foregroundColor(.white)
-                   .cornerRadius(20)
-               }
-               .padding(.bottom, 10)
-           }
-           .padding(.horizontal)
-           .background(
-               RoundedRectangle(cornerRadius: 30)
-                   .fill(Color(.background))
-           )
-           .padding(.top, 50)
-       }
-
+        ZStack {
+            Color(.background)
+                .ignoresSafeArea()
+            
+            VStack {
+                if currentStep == 1 {
+                    taskTypeSelectionView
+                        .transition(.move(edge: .leading))
+                } else if currentStep == 2 {
+                    taskDetailsView
+                        .transition(.move(edge: .trailing))
+                }
+            }
+            .animation(.easeInOut, value: currentStep)
+        }
+        .alert("تنبيه", isPresented: $showAlert) {
+            Button("حسناً", role: .cancel) { }
+        } message: {
+            Text(alertMessage)
+        }
+    }
+    
+    // MARK: - Step 1 View
+    var taskTypeSelectionView: some View {
+        VStack(spacing: 30) {
+            Text("نوع المهمة")
+                .font(.system(size: 28, weight: .bold))
+                .padding(.top, 20)
+                .foregroundColor(.btn)
+            
+            HStack(spacing: 60) {
+                VStack {
+                    typeButton(icon: "doc.fill", label: "عمل", color: .darkpinkc, id: "work", selectedType: $selectedType)
+                }
+                VStack {
+                    typeButton(icon: "person.3.fill", label: "اجتماع", color: .yellowc, id: "meeting", selectedType: $selectedType)
+                }
+            }
+            
+            HStack(spacing: 60) {
+                VStack {
+                    typeButton(icon: "person.fill", label: "شخصي", color: .pinkc, id: "personal", selectedType: $selectedType)
+                }
+                VStack {
+                    typeButton(icon: "house.fill", label: "منزل", color: .btn, id: "home", selectedType: $selectedType)
+                }
+            }
+            
+            typeButton(icon: "ellipsis", label: "اخرى", color: .lighghtGreenc, id: "other", selectedType: $selectedType)
+            
+            Button {
+                currentStep = 2
+            } label: {
+                HStack {
+                    Text("انتقل")
+                        .font(.system(size: 18, weight: .bold))
+                    Image(systemName: "arrow.right")
+                }
+                .padding()
+                .frame(width: 140)
+                .background(Color.btn)
+                .foregroundColor(.white)
+                .cornerRadius(20)
+            }
+            .padding(.bottom, 10)
+        }
+        .padding(.horizontal)
+        .background(
+            RoundedRectangle(cornerRadius: 30)
+                .fill(Color(.background))
+        )
+        .padding(.top, 50)
+    }
 
     var taskDetailsView: some View {
-    
-        VStack(alignment: .center){
-            
-            
-            if let id = selectedType, let type = types[id] {
-                            TaskTypeCircle(icon: type.icon, color: type.color)
-                                //.padding(.top, 40)
+        ScrollView {
+            VStack(alignment: .center, spacing: 20) {
+                HStack {
+                    Button(action: { currentStep = 1 }) {
+                        HStack {
+                            Image(systemName: "arrow.left")
+                            Text("رجوع")
                         }
-            
-            
-            VStack(spacing: 20) {
-                        
-                        // ----------------------
-                        // TASK NAME FIELD
-                        // ----------------------
-                        VStack(alignment: .trailing, spacing: 6) {
-                            Text("اسم المهمة")
-                                .font(.headline)
-                                .foregroundColor(.btn)
-                            
-                            TextField("اكتب اسم المهمة هنا", text: $name)
-                                .padding()
-                               // .background(Color(.systemGray6))
-                                .cornerRadius(10)
-                                .multilineTextAlignment(.trailing)
-                                .background(
-                                                   RoundedRectangle(cornerRadius: 10)
-                                                    .stroke(Color.btn.opacity(0.4), lineWidth: 1.5) // ← border
-                                               )
-                        }
-                        
-                        // ----------------------
-                        // DATE PICKER
-                        // ----------------------
-                        VStack(alignment: .trailing, spacing: 6) {
-                            Text("التاريخ")
-                                .font(.headline)
-                                .foregroundColor(.btn)
-                                .padding(.leading, 200)
-                            DatePicker(
-                                "",
-                                selection: $date,
-                                displayedComponents: .date
-                            )
-                            .labelsHidden()
-                            .datePickerStyle(.compact)
-                            .padding()
-                          //  .background(Color(.systemGray6))
-                            .cornerRadius(10)
-                            .padding(.leading, 200)
-                        }
-                     
-                        // ----------------------
-                        // TIME PICKER
-                        // ----------------------
-                        VStack(alignment: .trailing, spacing: 6) {
-                            Text("الوقت")
-                                .font(.headline)
-                                .foregroundColor(.btn)
-                            
-                            DatePicker(
-                                "",
-                                selection: $time,
-                                displayedComponents: .hourAndMinute
-                            )
-                            .labelsHidden()
-                            .datePickerStyle(.wheel)
-                            .frame(height: 70)
-                            .padding()
-                          //  .background(Color(.systemGray6))
-                            .cornerRadius(10)
-                        }
-                        
-                        // ----------------------
-                        // DESCRIPTION FIELD
-                        // ----------------------
-                        VStack(alignment: .trailing, spacing: 6) {
-                            Text("الوصف")
-                                .font(.headline)
-                                .foregroundColor(.btn)
-                            
-                            ZStack(alignment: .bottomLeading) {   // ← position button inside editor
-                                   TextEditor(text: $description)
-                                       .scrollContentBackground(.hidden)
-                                       .background(Color(.background))
-                                       .frame(minHeight: 120)
-                                       .padding(8)
-                                       .multilineTextAlignment(.trailing)
-                                       .overlay(
-                                           RoundedRectangle(cornerRadius: 10)
-                                               .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
-                                       )
-
-                                   // -----------------------------
-                                   // VOICE BUTTON OVERLAY
-                                   // -----------------------------
-                                   Button(action: {
-                                       // TODO: trigger recording logic
-                                   }) {
-                                       Image(systemName: "mic.fill")
-                                           .font(.system(size: 20))
-                                           .foregroundColor(.white)
-                                           .padding(10)
-                                           .background(Color.btn)
-                                          // .frame(width: 60, height: 60)  // ← button size
-                                           .clipShape(Circle())
-                                           .shadow(radius: 3)
-                                   }
-                                   .padding(.leading, 12)
-                                   .padding(.bottom, 45)
-                               }
-                           }
-                        // ----------------------
-                        // SUBMIT BUTTON
-                        // ----------------------
-                        Button(action: {
-                            print("Task saved: \(name)")
-                        }) {
-                            Text("حفظ")
-                                .font(.system(size: 18, weight: .bold))
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.btn)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                        }
-                        .padding(.top, 10)
-                        
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.btn)
                     }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 30)
-                    .fill(Color(.background))
-            )
-        }
-    }
-        
-    struct TaskTypeCircle: View {
-            let icon: String
-            let color: Color
-            
-            var body: some View {
-                Circle()
-                    .fill(color)
-                    .frame(width: 120, height: 120)
-                    .overlay(
-                        Image(systemName: icon)
-                            .font(.system(size: 40))
-                            .foregroundColor(.white)
-                    )
-                    .shadow(radius: 5)
-            }
-        }
-        
-        
-        // --------------------------
-        // TaskType Model
-        // --------------------------
-        struct TaskType {
-            let id: String
-            let icon: String
-            let label: String
-            let color: Color
-        }
-        
-        
-        // --------------------------
-        // Type Button Builder
-        // --------------------------
-        @ViewBuilder
-        func typeButton(icon: String, label: String, color: Color, id: String) -> some View {
-            TaskTypeButton(
-                icon: icon,
-                label: label,
-                isSelected: selectedType == id,
-                color: color
-            ) {
-                selectedType = id
-            }
-        }
-    }
+                    Spacer()
+                }
+                .padding(.horizontal)
+                
+                if let id = selectedType, let type = TaskHelpers.allTypes[id] {
+                    TaskTypeCircle(icon: type.icon, color: type.color)
+                }
+                
+                VStack(spacing: 10) {
+                    // TASK NAME
+                    VStack(alignment: .trailing, spacing: 6) {
+                        Text("اسم المهمة")
+                            .font(.headline)
+                            .foregroundColor(.btn)
+                        
+                        TextField("اكتب اسم المهمة هنا", text: $name)
+                            .padding()
+                            .cornerRadius(10)
+                            .multilineTextAlignment(.trailing)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
+                            )
+                    }
+                    
+                    // DATE PICKER
+                    VStack(alignment: .trailing, spacing: 6) {
+                        Text("التاريخ")
+                            .font(.headline)
+                            .foregroundColor(.btn)
+                            .padding(.leading, 200)
+                        
+                        DatePicker(
+                            "",
+                            selection: $date,
+                            displayedComponents: .date
+                        )
+                        .labelsHidden()
+                        .datePickerStyle(.compact)
+                        .padding()
+                        .cornerRadius(10)
+                        .padding(.leading, 200)
+                    }
+                    
+                    // TIME PICKER
+                    VStack(alignment: .trailing, spacing: 6) {
+                        Text("الوقت")
+                            .font(.headline)
+                            .foregroundColor(.btn)
+                        
+                        DatePicker(
+                            "",
+                            selection: $time,
+                            displayedComponents: .hourAndMinute
+                        )
+                        .labelsHidden()
+                        .datePickerStyle(.wheel)
+                        .frame(height: 70)
+                        .padding()
+                        .cornerRadius(10)
+                    }
+                    
+                    // DESCRIPTION
+                    VStack(alignment: .trailing, spacing: 6) {
+                        Text("الوصف")
+                            .font(.headline)
+                            .foregroundColor(.btn)
+                        
+                        ZStack(alignment: .bottomLeading) {
+                            TextEditor(text: $description)
+                                .scrollContentBackground(.hidden)
+                                .background(Color(.background))
+                                .frame(minHeight: 120)
+                                .padding(8)
+                                .multilineTextAlignment(.trailing)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
+                                )
+                            
+                            // VOICE BUTTON
+                            Button(action: {
 
-    #Preview {
-        sheetView()
+                            }) {
+                                Image(systemName: "mic.fill")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(.white)
+                                    .padding(10)
+                                    .background(Color.btn)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 3)
+                            }
+                            .padding(.leading, 12)
+                            .padding(.bottom, 45)
+                        }
+                    }
+                    
+                    // SAVE BUTTON
+                    Button(action: {
+                        saveTask()
+                        dismiss()
+                    }) {
+                        Text("حفظ")
+                            .font(.system(size: 18, weight: .bold))
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.btn)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                    }
+                   // .padding(.top, 10)
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 30)
+                        .fill(Color(.background))
+                )
+            }
+        }
     }
+  
+    private func saveTask() {
+        // Validation
+        guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
+            alertMessage = "الرجاء إدخال اسم المهمة"
+            showAlert = true
+            return
+        }
+        
+        guard let taskType = selectedType else {
+            alertMessage = "الرجاء اختيار نوع المهمة"
+            showAlert = true
+            return
+        }
+        
+        // Combine date and time
+        let calendar = Calendar.current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
+        
+        var combinedComponents = DateComponents()
+        combinedComponents.year = dateComponents.year
+        combinedComponents.month = dateComponents.month
+        combinedComponents.day = dateComponents.day
+        combinedComponents.hour = timeComponents.hour
+        combinedComponents.minute = timeComponents.minute
+        
+        let finalDate = calendar.date(from: combinedComponents) ?? date
+        
+        // Create new task
+        let newTask = TaskModel(
+            name: name,
+            type: taskType,
+            desc: description,
+            priority: 3, //constant for now until we add priority for user input
+            distance: 160,
+            actionType: "openTask",
+            date: finalDate
+        )
+        
+        // Insert into context
+        context.insert(newTask)
+        
+        // Save context
+        do {
+            try context.save()
+            print("Task saved successfully: \(newTask.name)")
+            dismiss()
+        } catch {
+            alertMessage = "حدث خطأ أثناء حفظ المهمة: \(error.localizedDescription)"
+            showAlert = true
+            print("Error saving task: \(error)")
+        }
+    }
+}
+
+// MARK: - Preview
+#Preview {
+    sheetView()
+        .modelContainer(for: TaskModel.self)
+}
