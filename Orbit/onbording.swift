@@ -12,30 +12,26 @@ struct OnboardingView: View {
     private let pages: [OnboardingPage] = [
         OnboardingPage(
             title: "",
-            description: "شاهد . مهامك . بوضوح ",
+            description: " See  •  Your Tasks  •  Clearly",
             image: Image("image1")
         ),
         OnboardingPage(
-            title: "زر طوارئ",
-            description: "اسحب للخارج . لعرض كل مهامك ",
+            title: "",
+            description: "Swipe out to  •  view all  •  your tasks clearly",
             image: Image("image2")
         ),
         OnboardingPage(
-            title: "تذكيرات تناسبك",
-            description: "هنا عن التذكيرات أو أي ميزة ثانية.",
+            title: "Got an emergency?",
+            description: "Tap to send  •  an apology",
             image: Image("image3")
-        ),
-        OnboardingPage(
-            title: "جاهز نبدأ؟",
-            description: "صفحة أخيرة تشجّع المستخدم يبدأ يستخدم التطبيق.",
-            image: Image("image2")
         )
     ]
     
     @State private var currentPage: Int = 0
+    @State private var selectedThemeIndex: Int = 4
     
     private var lastIndex: Int {
-        pages.count - 1
+        pages.count   
     }
     
     var body: some View {
@@ -50,29 +46,43 @@ struct OnboardingView: View {
                 .ignoresSafeArea(edges: .bottom)
             
             VStack {
+                HStack{
+                    Spacer()
+                    Text("Skip")
+                        .font(.system(size: 18, weight: .regular))
+                        .foregroundColor(.gray)
+                        .underline(true,color: .gray.opacity(0.6))
+                }
+                .padding(.top,20)
+                .padding(.trailing,20)
                 TabView(selection: $currentPage) {
-                    ForEach(pages.indices, id: \.self) { index in
-                        VStack(spacing: 20) {
-                            Spacer()
-                            
-                            pages[index].image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 350)
-                            
-                            Text(pages[index].title)
-                                .font(.title)
-                                .bold()
-                            
-                            Text(pages[index].description)
-                                .font(.body)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 32)
-                            
-                            Spacer()
+                    ForEach(0 ..< pages.count + 1, id: \.self) { index in
+                        
+                        if index < pages.count {
+                            VStack(spacing: 20) {
+                                Spacer()
+                                
+                                pages[index].image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 350)
+                                
+                                Text(pages[index].title)
+                                    .font(.title)
+                                    .bold()
+                                
+                                Text(pages[index].description)
+                                    .font(.system(.title3, design: .rounded))
+                                    .fontWeight(.medium)
+
+                                
+                                Spacer()
+                            }
+                            .tag(index)
+                        } else {
+                            LastOnboardingView(selectedThemeIndex: $selectedThemeIndex)
+                                .tag(index)
                         }
-                        .tag(index)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -82,7 +92,7 @@ struct OnboardingView: View {
                 VStack(spacing: 20) {
                     
                     HStack(spacing: 8) {
-                        ForEach(pages.indices, id: \.self) { index in
+                        ForEach(0 ..< pages.count + 1, id: \.self) { index in
                             Button {
                                 currentPage = index
                             } label: {
@@ -97,65 +107,67 @@ struct OnboardingView: View {
                             }
                             .buttonStyle(.plain)
                         }
+                        .padding(.bottom,30)
                     }
                     
-                    HStack {
-                        Spacer()
-                        
-                        Button {
-                            if currentPage < lastIndex {
-                                currentPage += 1
-                            }
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .fill(.ultraThinMaterial)
-                                
-                                Circle()
-                                    .fill(Color("Color"))
-                                
-                                HStack {
-                                    Spacer()
-                                    Image("arrow")
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 40, height: 40)
-                                        .foregroundColor(Color("Background"))
-                                        .padding(.trailing, 18)
+                    if currentPage != lastIndex {
+                        HStack {
+                            Spacer()
+                            
+                            Button {
+                                if currentPage < lastIndex {
+                                    currentPage += 1
+                                }
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(.ultraThinMaterial)
+                                    
+                                    Circle()
+                                        .fill(Color("Color"))
+                                    
+                                    HStack {
+                                        Spacer()
+                                        Image("arrow")
+                                            .renderingMode(.template)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .foregroundColor(Color("Background"))
+                                            .frame(width: 60, height: 60)
+                                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                                        
+                                    }
                                 }
                             }
+                            .frame(width: 90, height: 90)
+                            .shadow(color: Color("Color").opacity(0.25),
+                                    radius: 10, x: 0, y: 2)
                         }
-                        .frame(width: 90, height: 90)
-                        .shadow(color: Color("Color").opacity(0.25), radius: 10, x: 0, y: 2)
-                        .opacity(currentPage == lastIndex ? 0 : 1)
-                        .disabled(currentPage == lastIndex)
-                    }
-                    
-                    if currentPage == lastIndex {
-                        Button {
-                            print("ابدأ التطبيق")
-                          
-                        } label: {
-                            Text("ابدأ")
-                                .font(.headline)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 20)
-                                .background(Color("Color"))
-                                .shadow(color: Color("Color").opacity(0.25), radius: 10, x: 0, y: 2)
-                                .foregroundColor(.white)
-                                .cornerRadius(40)
-                            
+                    }else{
+                        HStack{
+                            Spacer()
+                            Button("Start"){
+                                
+                                print("start")
+                                
+                            }
+                            .font(.system(size: 18, weight: .semibold))
+                            .frame(width: 200,height: 70)
+                            .background(Color("Color"))
+                            .foregroundColor(.white)
+                            .cornerRadius(50)
+                            .shadow(color: Color("Color").opacity(0.25),
+                                    radius: 10, x: 0, y: 2)
                         }
-                        .padding(.top, 2)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 10)
+                .padding(.horizontal, 40)
+                .padding(.bottom, 20)
             }
         }
     }
 }
+
 
 #Preview {
     OnboardingView()
