@@ -244,14 +244,7 @@ struct sheetView: View {
                                    Button(action: {
                                        // TODO: trigger recording logic
                                    }) {
-                                       Image(systemName: "mic.fill")
-                                           .font(.system(size: 20))
-                                           .foregroundColor(.white)
-                                           .padding(10)
-                                           .background(Color.btn)
-                                          // .frame(width: 60, height: 60)  // ← button size
-                                           .clipShape(Circle())
-                                           .shadow(radius: 3)
+                                       
                                    }
                                    .padding(.leading, 12)
                                    .padding(.bottom, 45)
