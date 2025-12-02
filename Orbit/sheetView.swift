@@ -120,54 +120,54 @@ struct sheetView: View {
     // MARK: - Step 1 View
     var taskTypeSelectionView: some View {
         VStack(spacing: 30) {
-            Text("نوع المهمة")
-                .font(.system(size: 28, weight: .bold))
-                .padding(.top, 20)
-                .foregroundColor(.btn)
+            Text("Task Type")
+                .font(.system(size:25, weight: .bold))
+                .padding(.top)
+            //.foregroundColor(.btn)
             
             HStack(spacing: 60) {
                 VStack {
-                    typeButton(icon: "doc.fill", label: "عمل", color: .darkpinkc, id: "work", selectedType: $selectedType)
+                    typeButton(icon: "doc.fill", label: "Work", color: .darkpinkc, id: "work", selectedType: $selectedType)
                 }
                 VStack {
-                    typeButton(icon: "person.3.fill", label: "اجتماع", color: .yellowc, id: "meeting", selectedType: $selectedType)
+                    typeButton(icon: "person.3.fill", label: "Meeting", color: .yellowc, id: "meeting", selectedType: $selectedType)
                 }
             }
             
             HStack(spacing: 60) {
                 VStack {
-                    typeButton(icon: "person.fill", label: "شخصي", color: .pinkc, id: "personal", selectedType: $selectedType)
+                    typeButton(icon: "person.fill", label: "Personal", color: .pinkc, id: "personal", selectedType: $selectedType)
                 }
                 VStack {
-                    typeButton(icon: "house.fill", label: "منزل", color: .btn, id: "home", selectedType: $selectedType)
+                    typeButton(icon: "house.fill", label: "Home", color: .lightbluec, id: "home", selectedType: $selectedType)
                 }
             }
             
-            typeButton(icon: "ellipsis", label: "اخرى", color: .lighghtGreenc, id: "other", selectedType: $selectedType)
+            typeButton(icon: "ellipsis", label: "Other", color: .lighghtGreenc, id: "other", selectedType: $selectedType)
             
             Button {
                 currentStep = 2
             } label: {
-                HStack {
-                    Text("انتقل")
-                        .font(.system(size: 18, weight: .bold))
-                    Image(systemName: "arrow.right")
-                }
-                .padding()
-                .frame(width: 140)
-                .background(Color.btn)
-                .foregroundColor(.white)
-                .cornerRadius(20)
+                Text("Next")
+                    .font(.system(size: 18, weight: .semibold))
+                    .frame(width: 200, height: 70)
+                    .background(Color("btnColor"))
+                    .foregroundColor(.white)
+                    .cornerRadius(40)
+                    .shadow(color: Color("btnColor").opacity(0.25),
+                            radius: 10, x: 0, y: 2)
             }
-            .padding(.bottom, 10)
+            .padding(.leading)
         }
-        .padding(.horizontal)
+        //.padding(.horizontal)
         .background(
-            RoundedRectangle(cornerRadius: 30)
+        RoundedRectangle(cornerRadius: 30)
                 .fill(Color(.background))
         )
-        .padding(.top, 50)
+        .padding(.top, 70)
+        
     }
+    
 
     var taskDetailsView: some View {
         ScrollView {
@@ -191,15 +191,15 @@ struct sheetView: View {
                 
                 VStack(spacing: 10) {
                     // TASK NAME
-                    VStack(alignment: .trailing, spacing: 6) {
-                        Text("اسم المهمة")
-                            .font(.headline)
-                            .foregroundColor(.btn)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Task Name")
+                            .font(.system(size: 20 , weight: .semibold))
+                            //.foregroundColor(.btn)
                         
-                        TextField("اكتب اسم المهمة هنا", text: $name)
+                        TextField("Enter the task name here", text: $name)
                             .padding()
                             .cornerRadius(10)
-                            .multilineTextAlignment(.trailing)
+                            .multilineTextAlignment(.leading)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
@@ -207,11 +207,11 @@ struct sheetView: View {
                     }
                     
                     // DATE PICKER
-                    VStack(alignment: .trailing, spacing: 6) {
-                        Text("التاريخ")
-                            .font(.headline)
-                            .foregroundColor(.btn)
-                            .padding(.leading, 200)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Date")
+                            .font(.system(size: 20 , weight: .semibold))
+                            //.foregroundColor(.btn)
+                            .padding(.leading)
                         
                         DatePicker(
                             "",
@@ -222,14 +222,14 @@ struct sheetView: View {
                         .datePickerStyle(.compact)
                         .padding()
                         .cornerRadius(10)
-                        .padding(.leading, 200)
+                        //.padding(.leading, 200)
                     }
                     
                     // TIME PICKER
-                    VStack(alignment: .trailing, spacing: 6) {
-                        Text("الوقت")
-                            .font(.headline)
-                            .foregroundColor(.btn)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Time")
+                            .font(.system(size: 20 , weight: .semibold))
+                           // .foregroundColor(.btn)
                         
                         DatePicker(
                             "",
@@ -244,12 +244,12 @@ struct sheetView: View {
                     }
                     
                     // DESCRIPTION
-                    VStack(alignment: .trailing, spacing: 6) {
-                        Text("الوصف")
-                            .font(.headline)
-                            .foregroundColor(.btn)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Description")
+                            .font(.system(size: 20 , weight: .semibold))
+                            //.foregroundColor(.btn)
                         
-                        ZStack(alignment: .bottomLeading) {
+                        ZStack(alignment: .leading) {
                             TextEditor(text: $description)
                                 .scrollContentBackground(.hidden)
                                 .background(Color(.background))
@@ -279,21 +279,35 @@ struct sheetView: View {
                         // ----------------------
                         // SUBMIT BUTTON
                         // ----------------------
-                       
+                        Button(action: {
+                            print("Task saved: \(name)")
+                        }) {
+                            Text("Save")
+                                .font(.system(size: 18, weight: .semibold))
+                                .frame(width: 200, height: 70)
+                                .background(Color("Color"))
+                                .foregroundColor(.white)
+                                .cornerRadius(40)
+                                .shadow(color: Color("Color").opacity(0.25),
+                                        radius: 10, x: 0, y: 2)
+                        }
                     }
+                    // .padding(.leading, 80)
+
                     
                     // SAVE BUTTON
                     Button(action: {
                         saveTask()
                         dismiss()
                     }) {
-                        Text("حفظ")
-                            .font(.system(size: 18, weight: .bold))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.btn)
+                        Text("Save")
+                            .font(.system(size: 18, weight: .semibold))
+                            .frame(width: 200, height: 70)
+                            .background(Color("Color"))
                             .foregroundColor(.white)
-                            .cornerRadius(12)
+                            .cornerRadius(40)
+                            .shadow(color: Color("Color").opacity(0.25),
+                                    radius: 10, x: 0, y: 2)
                     }
                    // .padding(.top, 10)
                 }

@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    
+    @State private var showNotificationAlert = false
+    @State private var goToCalendar = false   // ← لنفذ الانتقال
+
     private let pages: [OnboardingPage] = [
         OnboardingPage(
             title: "",
@@ -17,7 +19,7 @@ struct OnboardingView: View {
         ),
         OnboardingPage(
             title: "",
-            description: "Swipe out to  •  view all  •  your tasks clearly",
+            description: "Swipe out • view all • tasks clearly",
             image: Image("image2")
         ),
         OnboardingPage(
@@ -28,10 +30,10 @@ struct OnboardingView: View {
     ]
     
     @State private var currentPage: Int = 0
-    @State private var selectedThemeIndex: Int = 0   // للألوان في آخر صفحة
+    @State private var selectedThemeIndex: Int = 0
     
     private var lastIndex: Int {
-        pages.count   // لأن عندنا صفحة زيادة (LastOnboardingView)
+        pages.count
     }
     
     var body: some View {
@@ -50,18 +52,18 @@ struct OnboardingView: View {
             VStack {
                 HStack {
                     Spacer()
-                    Text("Skip")
-                        .font(.system(size: 18, weight: .regular))
-                        .foregroundColor(.gray)
-                        .underline(true, color: .gray.opacity(0.6))
-                        .onTapGesture {
-                            currentPage = lastIndex   // يوديه لآخر صفحة
-                        }
+                    
+                    NavigationLink(destination: CalendarCarouselView()) {
+                        Text("Skip")
+                            .font(.system(size: 18, weight: .regular))
+                            .foregroundColor(.gray)
+                            .underline(true, color: .gray.opacity(0.6))
+                    }
                 }
                 .padding(.top, 20)
                 .padding(.trailing, 20)
                 
-                // PAGES
+                
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< pages.count + 1, id: \.self) { index in
                         
@@ -88,7 +90,6 @@ struct OnboardingView: View {
                             }
                             .tag(index)
                         } else {
-                            // صفحة اختيار الألوان
                             LastOnboardingView(selectedThemeIndex: $selectedThemeIndex)
                                 .tag(index)
                         }
@@ -97,6 +98,7 @@ struct OnboardingView: View {
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 
                 Spacer()
+                
                 
                 VStack(spacing: 20) {
                     
@@ -121,6 +123,7 @@ struct OnboardingView: View {
                     }
                     .padding(.bottom, 30)
                     
+                    
                     if currentPage != lastIndex {
                         HStack {
                             Spacer()
@@ -131,12 +134,8 @@ struct OnboardingView: View {
                                 }
                             } label: {
                                 ZStack {
-                                    Circle()
-                                        .fill(.ultraThinMaterial)
-                                    
-                                    Circle()
-                                        .fill(Color("Color"))
-                                    
+                                    Circle().fill(.ultraThinMaterial)
+                                    Circle().fill(Color("btnColor"))
                                     Image("arrow")
                                         .renderingMode(.template)
                                         .resizable()
@@ -150,20 +149,26 @@ struct OnboardingView: View {
                                     radius: 10, x: 0, y: 2)
                         }
                     } else {
-                        // آخر صفحة → زر Start
+                       
                         HStack {
                             Spacer()
                             
-                            NavigationLink {
+                            NavigationLink(isActive: $goToCalendar) {
                                 CalendarCarouselView()
+                            } label: {
+                                EmptyView()
+                            }
+                            
+                            Button {
+                                showNotificationAlert = true   // نعرض التنبيه
                             } label: {
                                 Text("Start")
                                     .font(.system(size: 18, weight: .semibold))
                                     .frame(width: 200, height: 70)
-                                    .background(Color("Color"))
+                                    .background(Color("btnColor"))
                                     .foregroundColor(.white)
                                     .cornerRadius(50)
-                                    .shadow(color: Color("Color").opacity(0.25),
+                                    .shadow(color: Color("btnColor").opacity(0.25),
                                             radius: 10, x: 0, y: 2)
                             }
                         }
@@ -172,6 +177,19 @@ struct OnboardingView: View {
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
             }
+        }
+        
+        // MARK: - ALERT
+        .alert("Enable Notifications", isPresented: $showNotificationAlert) {
+            Button("Yes") {
+                NotificationManager.shared.requestAuthorization()
+                goToCalendar = true
+            }
+            Button("Later", role: .cancel) {
+                goToCalendar = true
+            }
+        } message: {
+            Text("We’ll remind you on the days you have tasks.")
         }
     }
 }
