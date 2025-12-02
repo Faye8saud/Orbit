@@ -17,7 +17,7 @@ struct OnboardingView: View {
         ),
         OnboardingPage(
             title: "",
-            description: "Swipe out to  •  view all  •  your tasks clearly",
+            description: "Swipe out • view all • tasks clearly",
             image: Image("image2")
         ),
         OnboardingPage(
@@ -28,12 +28,11 @@ struct OnboardingView: View {
     ]
     
     @State private var currentPage: Int = 0
-    @State private var selectedThemeIndex: Int = 0   // للألوان في آخر صفحة
+    @State private var selectedThemeIndex: Int = 0
     
     private var lastIndex: Int {
-        pages.count   // لأن عندنا صفحة زيادة (LastOnboardingView)
+        pages.count
     }
-    
     var body: some View {
         ZStack {
             Color("background")
@@ -50,18 +49,20 @@ struct OnboardingView: View {
             VStack {
                 HStack {
                     Spacer()
-                    Text("Skip")
-                        .font(.system(size: 18, weight: .regular))
-                        .foregroundColor(.gray)
-                        .underline(true, color: .gray.opacity(0.6))
-                        .onTapGesture {
-                            currentPage = lastIndex   // يوديه لآخر صفحة
-                        }
+                    
+                    NavigationLink(destination: CalendarCarouselView()) {
+                        Text("Skip")
+                            .font(.system(size: 18, weight: .regular))
+                            .foregroundColor(.gray)
+                            .underline(true, color: .gray.opacity(0.6))
+                    }
                 }
+            
+
                 .padding(.top, 20)
                 .padding(.trailing, 20)
                 
-                // PAGES
+            
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< pages.count + 1, id: \.self) { index in
                         
@@ -88,7 +89,6 @@ struct OnboardingView: View {
                             }
                             .tag(index)
                         } else {
-                            // صفحة اختيار الألوان
                             LastOnboardingView(selectedThemeIndex: $selectedThemeIndex)
                                 .tag(index)
                         }
@@ -135,7 +135,7 @@ struct OnboardingView: View {
                                         .fill(.ultraThinMaterial)
                                     
                                     Circle()
-                                        .fill(Color("Color"))
+                                        .fill(Color("btnColor"))
                                     
                                     Image("arrow")
                                         .renderingMode(.template)
@@ -150,7 +150,6 @@ struct OnboardingView: View {
                                     radius: 10, x: 0, y: 2)
                         }
                     } else {
-                        // آخر صفحة → زر Start
                         HStack {
                             Spacer()
                             
@@ -160,10 +159,10 @@ struct OnboardingView: View {
                                 Text("Start")
                                     .font(.system(size: 18, weight: .semibold))
                                     .frame(width: 200, height: 70)
-                                    .background(Color("Color"))
+                                    .background(Color("btnColor"))
                                     .foregroundColor(.white)
                                     .cornerRadius(50)
-                                    .shadow(color: Color("Color").opacity(0.25),
+                                    .shadow(color: Color("btnColor").opacity(0.25),
                                             radius: 10, x: 0, y: 2)
                             }
                         }

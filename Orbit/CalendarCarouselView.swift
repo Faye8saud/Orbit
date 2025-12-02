@@ -49,9 +49,9 @@ struct CalendarCarouselView: View {
                     } label: {
                         ZStack {
                             Circle()
-                                .fill(Color("Color"))
+                                .fill(Color("btnColor"))
                                 .frame(width: 90, height: 90)
-                                .shadow(color: Color("Color").opacity(0.25),
+                                .shadow(color: Color("btnColor").opacity(0.25),
                                         radius: 10, x: 0, y: 2)
                             
                             Image(systemName: "plus")

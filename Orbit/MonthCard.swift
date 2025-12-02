@@ -72,11 +72,11 @@ struct MonthCard: View {
                     .frame(width: 28, height: 28)
                     .background(
                         Circle()
-                            .fill(isToday ? Color("Background").opacity(0.3) : .clear)
+                            .fill(isToday ? Color("background").opacity(0.3) : .clear)
                     )
                     .overlay(
                         Circle()
-                            .stroke(isToday ? Color("Background") : .clear, lineWidth: 0.3)
+                            .stroke(isToday ? Color("background") : .clear, lineWidth: 0.3)
                     )
             } else {
                 Text("")
