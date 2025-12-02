@@ -64,8 +64,7 @@ struct HomeView: View {
     @Query(sort: \TaskModel.date) var allTasks: [TaskModel]
 
     @State private var showSheet = false
-
-    // Only today's tasks
+    @State private var selectedTask: TaskModel? = nil
     private var todaysTasks: [TaskModel] {
         let cal = Calendar.current
         return allTasks.filter { cal.isDate($0.date, inSameDayAs: Date()) }
@@ -80,7 +79,7 @@ struct HomeView: View {
                 size: CGFloat(task.size),
                 distance: CGFloat(task.distance),
                 action: {
-                    print("Tapped task: \(task.name)")
+                    selectedTask = task
                     // TODO: Navigate to task detail
                 }
             )
@@ -142,6 +141,12 @@ struct HomeView: View {
         .sheet(isPresented: $showSheet) {
             sheetView()
                 .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+
+        }
+        .sheet(item: $selectedTask) { task in
+            taskSheet(task: task)
+                .presentationDetents([ .large])
                 .presentationDragIndicator(.visible)
         }
         .onAppear {

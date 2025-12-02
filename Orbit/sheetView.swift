@@ -279,17 +279,7 @@ struct sheetView: View {
                         // ----------------------
                         // SUBMIT BUTTON
                         // ----------------------
-                        Button(action: {
-                            print("Task saved: \(name)")
-                        }) {
-                            Text("حفظ")
-                                .font(.system(size: 18, weight: .bold))
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.btn)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                        }
+                       
                     }
                     
                     // SAVE BUTTON
