@@ -8,38 +8,37 @@
 import Foundation
 import UserNotifications
 
-final class NotificationManager {
+class NotificationManager {
     static let shared = NotificationManager()
+    
     private init() {}
     
+    // طلب تفعيل الإشعارات
     func requestAuthorization() {
-        UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
-                if let error = error {
-                    print("Notification error:", error)
-                } else {
-                    print("Notifications granted:", granted)
-                }
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: [.alert, .sound, .badge]
+        ) { granted, error in
+            if let error = error {
+                print("Notification error: \(error.localizedDescription)")
+            } else {
+                print("Notifications granted: \(granted)")
             }
+        }
     }
     
-    func scheduleTaskNotification(taskName: String, taskDate: Date) {
+    // جدولة تنبيه لليوم اللي فيه مهمة
+    func scheduleTaskReminder(taskName: String, date: Date) {
         let content = UNMutableNotificationContent()
-        content.title = "📌 Reminder"
-        content.body  = "You have a task: \(taskName)"
+        content.title = "Task Reminder"
+        content.body = "You have a task today: \(taskName)"
         content.sound = .default
         
-        let calendar = Calendar.current
+        // نخلي التنبيه مثلاً الساعة 9 الصباح في نفس اليوم
+        var components = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        components.hour = 9
+        components.minute = 0
         
-        guard let notifyDate = calendar.date(byAdding: .day, value: -1, to: taskDate) else {
-            return
-        }
-        
-        var comps = calendar.dateComponents([.year, .month, .day], from: notifyDate)
-        comps.hour = 20
-        comps.minute = 0
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         
         let request = UNNotificationRequest(
             identifier: UUID().uuidString,
@@ -49,9 +48,7 @@ final class NotificationManager {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("Failed to schedule:", error)
-            } else {
-                print("Notification scheduled for", comps)
+                print("Failed to schedule: \(error.localizedDescription)")
             }
         }
     }

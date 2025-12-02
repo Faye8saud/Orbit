@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    
+    @State private var showNotificationAlert = false
+    @State private var goToCalendar = false   // ← لنفذ الانتقال
+
     private let pages: [OnboardingPage] = [
         OnboardingPage(
             title: "",
@@ -33,6 +35,7 @@ struct OnboardingView: View {
     private var lastIndex: Int {
         pages.count
     }
+    
     var body: some View {
         ZStack {
             Color("background")
@@ -57,12 +60,10 @@ struct OnboardingView: View {
                             .underline(true, color: .gray.opacity(0.6))
                     }
                 }
-            
-
                 .padding(.top, 20)
                 .padding(.trailing, 20)
                 
-            
+                
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< pages.count + 1, id: \.self) { index in
                         
@@ -98,6 +99,7 @@ struct OnboardingView: View {
                 
                 Spacer()
                 
+                
                 VStack(spacing: 20) {
                     
                     HStack(spacing: 8) {
@@ -121,6 +123,7 @@ struct OnboardingView: View {
                     }
                     .padding(.bottom, 30)
                     
+                    
                     if currentPage != lastIndex {
                         HStack {
                             Spacer()
@@ -131,12 +134,8 @@ struct OnboardingView: View {
                                 }
                             } label: {
                                 ZStack {
-                                    Circle()
-                                        .fill(.ultraThinMaterial)
-                                    
-                                    Circle()
-                                        .fill(Color("btnColor"))
-                                    
+                                    Circle().fill(.ultraThinMaterial)
+                                    Circle().fill(Color("btnColor"))
                                     Image("arrow")
                                         .renderingMode(.template)
                                         .resizable()
@@ -150,11 +149,18 @@ struct OnboardingView: View {
                                     radius: 10, x: 0, y: 2)
                         }
                     } else {
+                       
                         HStack {
                             Spacer()
                             
-                            NavigationLink {
+                            NavigationLink(isActive: $goToCalendar) {
                                 CalendarCarouselView()
+                            } label: {
+                                EmptyView()
+                            }
+                            
+                            Button {
+                                showNotificationAlert = true   // نعرض التنبيه
                             } label: {
                                 Text("Start")
                                     .font(.system(size: 18, weight: .semibold))
@@ -171,6 +177,19 @@ struct OnboardingView: View {
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
             }
+        }
+        
+        // MARK: - ALERT
+        .alert("Enable Notifications", isPresented: $showNotificationAlert) {
+            Button("Yes") {
+                NotificationManager.shared.requestAuthorization()
+                goToCalendar = true
+            }
+            Button("Later", role: .cancel) {
+                goToCalendar = true
+            }
+        } message: {
+            Text("We’ll remind you on the days you have tasks.")
         }
     }
 }
