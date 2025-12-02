@@ -6,13 +6,13 @@
 //
 
 import SwiftUI
-     
+
 struct OnboardingView: View {
-  
+    
     private let pages: [OnboardingPage] = [
         OnboardingPage(
             title: "",
-            description: " See  •  Your Tasks  •  Clearly",
+            description: "See  •  Your Tasks  •  Clearly",
             image: Image("image1")
         ),
         OnboardingPage(
@@ -28,34 +28,40 @@ struct OnboardingView: View {
     ]
     
     @State private var currentPage: Int = 0
-    @State private var selectedThemeIndex: Int = 4
+    @State private var selectedThemeIndex: Int = 0   // للألوان في آخر صفحة
     
     private var lastIndex: Int {
-        pages.count   
+        pages.count   // لأن عندنا صفحة زيادة (LastOnboardingView)
     }
     
     var body: some View {
-        NavigationStack {
         ZStack {
-            Color("Background")
+            Color("background")
                 .ignoresSafeArea()
             
             Image("Background1")
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                .frame(maxWidth: .infinity,
+                       maxHeight: .infinity,
+                       alignment: .bottom)
                 .ignoresSafeArea(edges: .bottom)
             
             VStack {
-                HStack{
+                HStack {
                     Spacer()
                     Text("Skip")
                         .font(.system(size: 18, weight: .regular))
                         .foregroundColor(.gray)
-                        .underline(true,color: .gray.opacity(0.6))
+                        .underline(true, color: .gray.opacity(0.6))
+                        .onTapGesture {
+                            currentPage = lastIndex   // يوديه لآخر صفحة
+                        }
                 }
-                .padding(.top,20)
-                .padding(.trailing,20)
+                .padding(.top, 20)
+                .padding(.trailing, 20)
+                
+                // PAGES
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< pages.count + 1, id: \.self) { index in
                         
@@ -75,12 +81,14 @@ struct OnboardingView: View {
                                 Text(pages[index].description)
                                     .font(.system(.title3, design: .rounded))
                                     .fontWeight(.medium)
-
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 32)
                                 
                                 Spacer()
                             }
                             .tag(index)
                         } else {
+                            // صفحة اختيار الألوان
                             LastOnboardingView(selectedThemeIndex: $selectedThemeIndex)
                                 .tag(index)
                         }
@@ -103,13 +111,15 @@ struct OnboardingView: View {
                                         height: 12
                                     )
                                     .foregroundColor(
-                                        currentPage == index ? Color("Color1") : .gray.opacity(0.4)
+                                        currentPage == index
+                                        ? Color("Color1")
+                                        : .gray.opacity(0.4)
                                     )
                             }
                             .buttonStyle(.plain)
                         }
-                        .padding(.bottom,30)
                     }
+                    .padding(.bottom, 30)
                     
                     if currentPage != lastIndex {
                         HStack {
@@ -127,48 +137,47 @@ struct OnboardingView: View {
                                     Circle()
                                         .fill(Color("Color"))
                                     
-                                    HStack {
-                                        Spacer()
-                                        Image("arrow")
-                                            .renderingMode(.template)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .foregroundColor(Color("Background"))
-                                            .frame(width: 60, height: 60)
-                                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                                        
-                                    }
+                                    Image("arrow")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(Color("background"))
+                                        .frame(width: 60, height: 60)
                                 }
                             }
                             .frame(width: 90, height: 90)
                             .shadow(color: Color("Color").opacity(0.25),
                                     radius: 10, x: 0, y: 2)
                         }
-                    }else{
-                            HStack{
-                                Spacer()
-                                NavigationLink(destination: HomeView()) {
-                                    Text("Start")
-                                        .font(.system(size: 18, weight: .semibold))
-                                        .frame(width: 200, height: 70)
-                                        .background(Color("Color"))
-                                        .foregroundColor(.white)
-                                        .cornerRadius(50)
-                                        .shadow(color: Color("Color").opacity(0.25), radius: 10, x: 0, y: 2)
-                                }
+                    } else {
+                        // آخر صفحة → زر Start
+                        HStack {
+                            Spacer()
+                            
+                            NavigationLink {
+                                CalendarCarouselView()
+                            } label: {
+                                Text("Start")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .frame(width: 200, height: 70)
+                                    .background(Color("Color"))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(50)
+                                    .shadow(color: Color("Color").opacity(0.25),
+                                            radius: 10, x: 0, y: 2)
                             }
-                        
+                        }
                     }
                 }
                 .padding(.horizontal, 40)
                 .padding(.bottom, 20)
             }
         }
-        }
     }
 }
 
-
 #Preview {
-    OnboardingView()
+    NavigationStack {
+        OnboardingView()
+    }
 }

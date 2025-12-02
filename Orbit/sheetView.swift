@@ -262,7 +262,7 @@ struct sheetView: View {
                                 )
                             
                             // VOICE BUTTON
-                            Button(action: {
+                           // Button(action: {
 
                                    // -----------------------------
                                    // VOICE BUTTON OVERLAY
@@ -275,7 +275,7 @@ struct sheetView: View {
                                    .padding(.leading, 12)
                                    .padding(.bottom, 45)
                                }
-                           }
+                       //    }
                         // ----------------------
                         // SUBMIT BUTTON
                         // ----------------------
