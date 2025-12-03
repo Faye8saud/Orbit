@@ -13,8 +13,7 @@ class NotificationManager {
     
     private init() {}
     
-    // طلب تفعيل الإشعارات
-    func requestAuthorization() {
+      func requestAuthorization() {
         UNUserNotificationCenter.current().requestAuthorization(
             options: [.alert, .sound, .badge]
         ) { granted, error in

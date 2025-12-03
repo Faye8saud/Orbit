@@ -9,8 +9,8 @@ import SwiftUI
 
 struct OnboardingView: View {
     @State private var showNotificationAlert = false
-    @State private var goToCalendar = false   // ← لنفذ الانتقال
-
+    @State private var goToCalendar = false   // للتحويل بعد التنبيه
+    
     private let pages: [OnboardingPage] = [
         OnboardingPage(
             title: "",
@@ -33,7 +33,7 @@ struct OnboardingView: View {
     @State private var selectedThemeIndex: Int = 0
     
     private var lastIndex: Int {
-        pages.count
+        pages.count   // آخر صفحة = صفحة اختيار الألوان
     }
     
     var body: some View {
@@ -50,6 +50,7 @@ struct OnboardingView: View {
                 .ignoresSafeArea(edges: .bottom)
             
             VStack {
+        
                 HStack {
                     Spacer()
                     
@@ -63,7 +64,7 @@ struct OnboardingView: View {
                 .padding(.top, 20)
                 .padding(.trailing, 20)
                 
-                
+                // MARK: - Pages
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< pages.count + 1, id: \.self) { index in
                         
@@ -99,7 +100,7 @@ struct OnboardingView: View {
                 
                 Spacer()
                 
-                
+                // MARK: - Dots + Bottom Button
                 VStack(spacing: 20) {
                     
                     HStack(spacing: 8) {
@@ -122,7 +123,6 @@ struct OnboardingView: View {
                         }
                     }
                     .padding(.bottom, 30)
-                    
                     
                     if currentPage != lastIndex {
                         HStack {
@@ -149,18 +149,11 @@ struct OnboardingView: View {
                                     radius: 10, x: 0, y: 2)
                         }
                     } else {
-                       
                         HStack {
                             Spacer()
                             
-                            NavigationLink(isActive: $goToCalendar) {
-                                CalendarCarouselView()
-                            } label: {
-                                EmptyView()
-                            }
-                            
                             Button {
-                                showNotificationAlert = true   // نعرض التنبيه
+                                showNotificationAlert = true
                             } label: {
                                 Text("Start")
                                     .font(.system(size: 18, weight: .semibold))
@@ -178,8 +171,9 @@ struct OnboardingView: View {
                 .padding(.bottom, 20)
             }
         }
-        
-        // MARK: - ALERT
+        .navigationDestination(isPresented: $goToCalendar) {
+            CalendarCarouselView()
+        }
         .alert("Enable Notifications", isPresented: $showNotificationAlert) {
             Button("Yes") {
                 NotificationManager.shared.requestAuthorization()
