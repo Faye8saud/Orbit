@@ -125,13 +125,17 @@ struct HomeView: View {
                     Button(action: {
                         showSheet = true
                     }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 22, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(20)
-                            .glassEffect(.regular.tint(.btn).interactive())
-                            .clipShape(Circle())
-                            .shadow(color: .black.opacity(0.3), radius: 6, x: 0, y: 4)
+                        ZStack {
+                            Circle()
+                                .fill(Color("btnColor"))
+                                .frame(width: 90, height: 90)
+                                .shadow(color: Color("btnColor").opacity(0.25),
+                                        radius: 10, x: 0, y: 2)
+                            
+                            Image(systemName: "plus")
+                                .font(.system(size: 30, weight: .bold))
+                                .foregroundColor(.white)
+                        }
                     }
                     .padding(.trailing, 20)
                     .padding(.bottom, 30)

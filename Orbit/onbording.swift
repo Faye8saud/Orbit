@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @State private var showNotificationAlert = false
-    @State private var goToCalendar = false   // للتحويل بعد التنبيه
     
     private let pages: [OnboardingPage] = [
         OnboardingPage(
@@ -31,6 +29,7 @@ struct OnboardingView: View {
     
     @State private var currentPage: Int = 0
     @State private var selectedThemeIndex: Int = 0
+    @State private var showCalendar: Bool = false   // هنا نتحكم في إظهار صفحة الكالندر
     
     private var lastIndex: Int {
         pages.count   // آخر صفحة = صفحة اختيار الألوان
@@ -50,11 +49,14 @@ struct OnboardingView: View {
                 .ignoresSafeArea(edges: .bottom)
             
             VStack {
-        
+                
+                // MARK: - Skip
                 HStack {
                     Spacer()
                     
-                    NavigationLink(destination: CalendarCarouselView()) {
+                    Button {
+                        showCalendar = true
+                    } label: {
                         Text("Skip")
                             .font(.system(size: 18, weight: .regular))
                             .foregroundColor(.gray)
@@ -103,6 +105,7 @@ struct OnboardingView: View {
                 // MARK: - Dots + Bottom Button
                 VStack(spacing: 20) {
                     
+                    // المؤشرات
                     HStack(spacing: 8) {
                         ForEach(0 ..< pages.count + 1, id: \.self) { index in
                             Button {
@@ -124,6 +127,7 @@ struct OnboardingView: View {
                     }
                     .padding(.bottom, 30)
                     
+                    // زر السهم أو Start
                     if currentPage != lastIndex {
                         HStack {
                             Spacer()
@@ -153,7 +157,7 @@ struct OnboardingView: View {
                             Spacer()
                             
                             Button {
-                                showNotificationAlert = true
+                                showCalendar = true
                             } label: {
                                 Text("Start")
                                     .font(.system(size: 18, weight: .semibold))
@@ -171,19 +175,11 @@ struct OnboardingView: View {
                 .padding(.bottom, 20)
             }
         }
-        .navigationDestination(isPresented: $goToCalendar) {
-            CalendarCarouselView()
-        }
-        .alert("Enable Notifications", isPresented: $showNotificationAlert) {
-            Button("Yes") {
-                NotificationManager.shared.requestAuthorization()
-                goToCalendar = true
+        // هنا نعرض الكالندر فول سكرين إذا showCalendar = true
+        .fullScreenCover(isPresented: $showCalendar) {
+            NavigationStack {
+                CalendarCarouselView()
             }
-            Button("Later", role: .cancel) {
-                goToCalendar = true
-            }
-        } message: {
-            Text("We’ll remind you on the days you have tasks.")
         }
     }
 }

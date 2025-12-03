@@ -161,14 +161,13 @@ struct sheetView: View {
         }
         //.padding(.horizontal)
         .background(
-        RoundedRectangle(cornerRadius: 30)
+            RoundedRectangle(cornerRadius: 30)
                 .fill(Color(.background))
         )
         .padding(.top, 70)
         
     }
     
-
     var taskDetailsView: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
@@ -189,16 +188,14 @@ struct sheetView: View {
                     TaskTypeCircle(icon: type.icon, color: type.color)
                 }
                 
-                VStack(spacing: 10) {
+                VStack(spacing: 16) {
                     // TASK NAME
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Task Name")
                             .font(.system(size: 20 , weight: .semibold))
-                            //.foregroundColor(.btn)
                         
                         TextField("Enter the task name here", text: $name)
                             .padding()
-                            .cornerRadius(10)
                             .multilineTextAlignment(.leading)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
@@ -206,12 +203,10 @@ struct sheetView: View {
                             )
                     }
                     
-                    // DATE PICKER
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Date")
+                            .multilineTextAlignment(.leading)
                             .font(.system(size: 20 , weight: .semibold))
-                            //.foregroundColor(.btn)
-                            .padding(.leading)
                         
                         DatePicker(
                             "",
@@ -221,15 +216,16 @@ struct sheetView: View {
                         .labelsHidden()
                         .datePickerStyle(.compact)
                         .padding()
-                        .cornerRadius(10)
-                        //.padding(.leading, 200)
+                       // .background(
+                           // RoundedRectangle(cornerRadius: 10)
+                                //.stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
+                       // )
                     }
                     
                     // TIME PICKER
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Time")
                             .font(.system(size: 20 , weight: .semibold))
-                           // .foregroundColor(.btn)
                         
                         DatePicker(
                             "",
@@ -239,77 +235,58 @@ struct sheetView: View {
                         .labelsHidden()
                         .datePickerStyle(.wheel)
                         .frame(height: 70)
-                        .padding()
-                        .cornerRadius(10)
+                       // .padding()
+                       // .background(
+                          //  RoundedRectangle(cornerRadius: 10)
+                            //    .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
+                       // )
                     }
                     
                     // DESCRIPTION
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Description")
                             .font(.system(size: 20 , weight: .semibold))
-                            //.foregroundColor(.btn)
                         
-                        ZStack(alignment: .leading) {
+                        ZStack(alignment: .topLeading) {
                             TextEditor(text: $description)
                                 .scrollContentBackground(.hidden)
                                 .background(Color(.background))
                                 .frame(minHeight: 120)
                                 .padding(8)
-                                .multilineTextAlignment(.trailing)
+                                .multilineTextAlignment(.leading) // يسار للإنجليزي
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)
                                         .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
                                 )
                             
-                            // VOICE BUTTON
-                           // Button(action: {
-
-                                   // -----------------------------
-                                   // VOICE BUTTON OVERLAY
-                                   // -----------------------------
-                                   Button(action: {
-                                       // TODO: trigger recording logic
-                                   }) {
-                                       
-                                   }
-                                   .padding(.leading, 12)
-                                   .padding(.bottom, 45)
-                               }
-                       //    }
-                        // ----------------------
-                        // SUBMIT BUTTON
-                        // ----------------------
-                        Button(action: {
-                            print("Task saved: \(name)")
-                        }) {
-                            Text("Save")
-                                .font(.system(size: 18, weight: .semibold))
-                                .frame(width: 200, height: 70)
-                                .background(Color("Color"))
-                                .foregroundColor(.white)
-                                .cornerRadius(40)
-                                .shadow(color: Color("Color").opacity(0.25),
-                                        radius: 10, x: 0, y: 2)
+                            
+                            //لو حبيتي تفعّلينه لاحقاً
+                            // Button(action: {
+                            //     // TODO: trigger recording logic
+                            // }) {
+                            //     Image(systemName: "mic.fill")
+                            //         .font(.system(size: 18, weight: .semibold))
+                            //         .foregroundColor(.btn)
+                            // }
+                            // .padding(.leading, 16)
+                            // .padding(.top, 16)
                         }
                     }
-                    // .padding(.leading, 80)
-
                     
-                    // SAVE BUTTON
                     Button(action: {
                         saveTask()
-                        dismiss()
                     }) {
                         Text("Save")
                             .font(.system(size: 18, weight: .semibold))
                             .frame(width: 200, height: 70)
-                            .background(Color("Color"))
+                            .background(Color("btnColor"))
                             .foregroundColor(.white)
                             .cornerRadius(40)
-                            .shadow(color: Color("Color").opacity(0.25),
+                            .shadow(color: Color("btnColor").opacity(0.25),
                                     radius: 10, x: 0, y: 2)
                     }
-                   // .padding(.top, 10)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.top, 10)
                 }
                 .padding()
                 .background(
@@ -319,9 +296,8 @@ struct sheetView: View {
             }
         }
     }
-  
+    
     private func saveTask() {
-        // Validation
         guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
             alertMessage = "الرجاء إدخال اسم المهمة"
             showAlert = true
@@ -353,7 +329,7 @@ struct sheetView: View {
             name: name,
             type: taskType,
             desc: description,
-            priority: 3, //constant for now until we add priority for user input
+            priority: 3, 
             distance: 160,
             actionType: "openTask",
             date: finalDate
@@ -374,6 +350,7 @@ struct sheetView: View {
         }
     }
 }
+    
 
 // MARK: - Preview
 #Preview {

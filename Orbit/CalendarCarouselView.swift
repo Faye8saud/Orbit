@@ -9,7 +9,9 @@ import SwiftUI
 
 struct CalendarCarouselView: View {
     @State private var currentIndex: Int = 0
-    @State private var showSheet : Bool = false
+    @State private var showSheet: Bool = false
+    @State private var showNotificationAlert: Bool = false   // لتنبيه الإشعارات
+    
     private let calendar = Calendar.current
     
     private var months: [Date] {
@@ -40,12 +42,11 @@ struct CalendarCarouselView: View {
                 
                 Spacer()
                 
-                
                 HStack {
                     Spacer()
                     
                     Button {
-                        showSheet = true
+                        showNotificationAlert = true
                     } label: {
                         ZStack {
                             Circle()
@@ -62,17 +63,25 @@ struct CalendarCarouselView: View {
                     .padding(.trailing, 32)
                     .padding(.bottom, 40)
                 }
-                
             }
         }
         .sheet(isPresented: $showSheet) {
             sheetView()
         }
+        .alert("Enable Notifications", isPresented: $showNotificationAlert) {
+            Button("Yes") {
+                NotificationManager.shared.requestAuthorization()
+                showSheet = true
+            }
+            Button("Later", role: .cancel) {
+                showSheet = true
+            }
+        } message: {
+            Text("We’ll remind you on the days you have tasks.")
+        }
     }
 }
-    
 
 #Preview {
     CalendarCarouselView()
-   
 }
