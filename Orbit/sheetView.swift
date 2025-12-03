@@ -55,13 +55,14 @@ struct TaskTypeCircle: View {
     var body: some View {
         Circle()
             .fill(color)
-            .frame(width: 120, height: 120)
+            .frame(width: 90, height: 90)
             .overlay(
                 Image(systemName: icon)
-                    .font(.system(size: 40))
+                    .font(.system(size: 30))
                     .foregroundColor(.white)
             )
             .shadow(radius: 5)
+            .padding(-10)
     }
 }
 
@@ -123,11 +124,8 @@ struct sheetView: View {
         } message: {
             Text(alertMessage)
         }
-        .fullScreenCover(isPresented: $goHome) {
-            NavigationStack {
-                HomeView()   // 👈 هنا صفحة الهوم
-            }
-        }
+        
+        
     }
     
     // MARK: - Step 1 View
@@ -184,13 +182,20 @@ struct sheetView: View {
             VStack(alignment: .center, spacing: 20) {
                 HStack {
                     Button(action: { currentStep = 1 }) {
-                        HStack {
-                            Image(systemName: "arrow.left")
-                            Text("Back")
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.background)
+                           
                         }
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.btn)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 15)
+                        .padding(.horizontal, 18)
+                        .glassEffect(.regular.tint(.btn).interactive())
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
+                    .padding(.leading, 4)
+                    .padding(.top, 15)
                     Spacer()
                         //.padding(.top,30)
                         //.padding(.horizontal,30)
@@ -198,9 +203,10 @@ struct sheetView: View {
 
                 if let id = selectedType, let type = TaskHelpers.allTypes[id] {
                     TaskTypeCircle(icon: type.icon, color: type.color)
+                        .offset(y:-10)
                 }
-                
-                VStack(spacing: 16) {
+               
+                VStack(spacing: 20) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Task Name")
                             .font(.system(size: 20 , weight: .semibold))
@@ -214,22 +220,26 @@ struct sheetView: View {
                             )
                     }
                     
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Date")
-                            .multilineTextAlignment(.leading)
-                            .font(.system(size: 20 , weight: .semibold))
-                        
-                        DatePicker(
-                            "",
-                            selection: $date,
-                            displayedComponents: .date
-                        )
-                        .labelsHidden()
-                        .datePickerStyle(.compact)
-                        .padding()
+                   
+                    HStack(spacing: 20){
+                            Text("Date")
+                                .multilineTextAlignment(.leading)
+                                .font(.system(size: 20 , weight: .semibold))
+                            
+                            DatePicker(
+                                "",
+                                selection: $date,
+                                displayedComponents: .date
+                            )
+                            .labelsHidden()
+                            .datePickerStyle(.compact)
+                           
+                           Spacer()
                     }
+                    //.padding(.leading, 5)
                     
-                    VStack(alignment: .leading, spacing: 6) {
+                    
+                    VStack(alignment: .leading, spacing: 70) {
                         Text("Time")
                             .font(.system(size: 20 , weight: .semibold))
                         
@@ -240,35 +250,37 @@ struct sheetView: View {
                         )
                         .labelsHidden()
                         .datePickerStyle(.wheel)
-                        .frame(height: 90)
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Description")
-                            .font(.system(size: 20 , weight: .semibold))
+                        //.frame(height: 90)
+                        .scaleEffect(0.85)
+                        .frame(height: 30)
                         
-                        ZStack(alignment: .topLeading) {
-                            TextEditor(text: $description)
-                                .scrollContentBackground(.hidden)
-                                .background(Color(.background))
-                                .frame(minHeight: 120)
-                                .padding(8)
-                                .multilineTextAlignment(.leading)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
-                                )
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Description")
+                                .font(.system(size: 16 , weight: .semibold))
+                            
+                            ZStack(alignment: .topLeading) {
+                                TextEditor(text: $description)
+                                    .scrollContentBackground(.hidden)
+                                    .background(Color(.background))
+                                    .frame(minHeight: 100)
+                                    .padding(8)
+                                    .multilineTextAlignment(.leading)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
+                                    )
+                            }
                         }
                     }
                     
                     Button(action: {
                         if saveTask() {
-                            goHome = true
+                            dismiss()
                         }
                     }) {
                         Text("Save")
                             .font(.system(size: 18, weight: .semibold))
-                            .frame(width: 200, height: 70)
+                            .frame(width: 200, height: 50)
                             .background(Color("btnColor"))
                             .foregroundColor(.white)
                             .cornerRadius(40)
@@ -276,7 +288,7 @@ struct sheetView: View {
                                     radius: 10, x: 0, y: 2)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 10)
+                    .padding(.top, 5)
                 }
                 .padding()
                 .background(

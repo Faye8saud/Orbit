@@ -107,8 +107,9 @@ struct HomeView: View {
                             .clipShape(Circle())
                             .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
                     }
-                    .padding(.top, 20)
+                    .padding(.top, 0)
                     .padding(.trailing, 20)
+                    .offset(y: -50)
                 }
                 Spacer()
             }

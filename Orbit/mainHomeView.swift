@@ -11,6 +11,7 @@ struct mainHomeView: View {
     @State private var showTaskSheet = false
     
     var body: some View {
+        NavigationStack {
         ZStack {
             Color(.background)
                 .ignoresSafeArea()
@@ -130,6 +131,11 @@ struct mainHomeView: View {
                 .presentationDetents([.large])  // custom height
                 .presentationDragIndicator(.visible)
         }
+        .navigationDestination(isPresented: $navigate) {
+                    HomeView()
+                }
+        }
+        
     }
     
 }
