@@ -66,7 +66,14 @@ struct TaskTypeCircle: View {
 }
 
 @ViewBuilder
-func typeButton(icon: String, label: String, color: Color, id: String, selectedType: Binding<String?>, action: @escaping () -> Void = {}) -> some View {
+func typeButton(
+    icon: String,
+    label: String,
+    color: Color,
+    id: String,
+    selectedType: Binding<String?>,
+    action: @escaping () -> Void = {}
+) -> some View {
     TaskTypeButton(
         icon: icon,
         label: label,
@@ -78,7 +85,6 @@ func typeButton(icon: String, label: String, color: Color, id: String, selectedT
     }
 }
 
-// MARK: - Sheet View
 struct sheetView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -93,6 +99,8 @@ struct sheetView: View {
     
     @State private var showAlert = false
     @State private var alertMessage = ""
+    
+    @State private var goHome: Bool = false
     
     var body: some View {
         ZStack {
@@ -115,6 +123,11 @@ struct sheetView: View {
         } message: {
             Text(alertMessage)
         }
+        .fullScreenCover(isPresented: $goHome) {
+            NavigationStack {
+                HomeView()   // 👈 هنا صفحة الهوم
+            }
+        }
     }
     
     // MARK: - Step 1 View
@@ -123,7 +136,6 @@ struct sheetView: View {
             Text("Task Type")
                 .font(.system(size:25, weight: .bold))
                 .padding(.top)
-            //.foregroundColor(.btn)
             
             HStack(spacing: 60) {
                 VStack {
@@ -159,15 +171,14 @@ struct sheetView: View {
             }
             .padding(.leading)
         }
-        //.padding(.horizontal)
         .background(
             RoundedRectangle(cornerRadius: 30)
                 .fill(Color(.background))
         )
         .padding(.top, 70)
-        
     }
     
+    // MARK: - Step 2 View
     var taskDetailsView: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
@@ -175,21 +186,21 @@ struct sheetView: View {
                     Button(action: { currentStep = 1 }) {
                         HStack {
                             Image(systemName: "arrow.left")
-                            Text("رجوع")
+                            Text("Back")
                         }
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.btn)
                     }
                     Spacer()
+                        //.padding(.top,30)
+                        //.padding(.horizontal,30)
                 }
-                .padding(.horizontal)
-                
+
                 if let id = selectedType, let type = TaskHelpers.allTypes[id] {
                     TaskTypeCircle(icon: type.icon, color: type.color)
                 }
                 
                 VStack(spacing: 16) {
-                    // TASK NAME
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Task Name")
                             .font(.system(size: 20 , weight: .semibold))
@@ -216,13 +227,8 @@ struct sheetView: View {
                         .labelsHidden()
                         .datePickerStyle(.compact)
                         .padding()
-                       // .background(
-                           // RoundedRectangle(cornerRadius: 10)
-                                //.stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
-                       // )
                     }
                     
-                    // TIME PICKER
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Time")
                             .font(.system(size: 20 , weight: .semibold))
@@ -234,15 +240,9 @@ struct sheetView: View {
                         )
                         .labelsHidden()
                         .datePickerStyle(.wheel)
-                        .frame(height: 70)
-                       // .padding()
-                       // .background(
-                          //  RoundedRectangle(cornerRadius: 10)
-                            //    .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
-                       // )
+                        .frame(height: 90)
                     }
                     
-                    // DESCRIPTION
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Description")
                             .font(.system(size: 20 , weight: .semibold))
@@ -253,28 +253,18 @@ struct sheetView: View {
                                 .background(Color(.background))
                                 .frame(minHeight: 120)
                                 .padding(8)
-                                .multilineTextAlignment(.leading) // يسار للإنجليزي
+                                .multilineTextAlignment(.leading)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)
                                         .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
                                 )
-                            
-                            
-                            //لو حبيتي تفعّلينه لاحقاً
-                            // Button(action: {
-                            //     // TODO: trigger recording logic
-                            // }) {
-                            //     Image(systemName: "mic.fill")
-                            //         .font(.system(size: 18, weight: .semibold))
-                            //         .foregroundColor(.btn)
-                            // }
-                            // .padding(.leading, 16)
-                            // .padding(.top, 16)
                         }
                     }
                     
                     Button(action: {
-                        saveTask()
+                        if saveTask() {
+                            goHome = true
+                        }
                     }) {
                         Text("Save")
                             .font(.system(size: 18, weight: .semibold))
@@ -297,17 +287,18 @@ struct sheetView: View {
         }
     }
     
-    private func saveTask() {
+    @discardableResult
+    private func saveTask() -> Bool {
         guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
-            alertMessage = "الرجاء إدخال اسم المهمة"
+            alertMessage = "Please enter the task name "
             showAlert = true
-            return
+            return false
         }
         
         guard let taskType = selectedType else {
-            alertMessage = "الرجاء اختيار نوع المهمة"
+            alertMessage = "Please select the task type"
             showAlert = true
-            return
+            return false
         }
         
         // Combine date and time
@@ -324,35 +315,31 @@ struct sheetView: View {
         
         let finalDate = calendar.date(from: combinedComponents) ?? date
         
-        // Create new task
         let newTask = TaskModel(
             name: name,
             type: taskType,
             desc: description,
-            priority: 3, 
+            priority: 3,
             distance: 160,
             actionType: "openTask",
             date: finalDate
         )
         
-        // Insert into context
         context.insert(newTask)
         
-        // Save context
         do {
             try context.save()
             print("Task saved successfully: \(newTask.name)")
-            dismiss()
+            return true
         } catch {
             alertMessage = "حدث خطأ أثناء حفظ المهمة: \(error.localizedDescription)"
             showAlert = true
             print("Error saving task: \(error)")
+            return false
         }
     }
 }
-    
 
-// MARK: - Preview
 #Preview {
     sheetView()
         .modelContainer(for: TaskModel.self)
