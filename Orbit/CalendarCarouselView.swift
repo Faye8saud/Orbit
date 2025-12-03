@@ -14,6 +14,8 @@ struct CalendarCarouselView: View {
     
     private let calendar = Calendar.current
     
+    @State private var navigateHome = false
+    
     private var months: [Date] {
         let now = Date()
         return (0..<3).compactMap { offset in
@@ -22,66 +24,87 @@ struct CalendarCarouselView: View {
     }
     
     var body: some View {
-        ZStack {
-            Color("background").ignoresSafeArea()
-            
-            VStack {
-                Spacer().frame(height: 40)
+        NavigationStack {
+            ZStack {
+                Color("background").ignoresSafeArea()
                 
-                TabView(selection: $currentIndex) {
-                    ForEach(months.indices, id: \.self) { index in
-                        MonthCard(
-                            monthDate: months[index],
-                            isCurrent: index == 0
-                        )
-                        .tag(index)
-                    }
-                }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                .frame(height: 340)
-                
-                Spacer()
-                
-                HStack {
-                    Spacer()
+                VStack {
+                    Spacer().frame(height: 40)
                     
-                    Button {
-                        showNotificationAlert = true
-                    } label: {
-                        ZStack {
-                            Circle()
-                                .fill(Color("btnColor"))
-                                .frame(width: 90, height: 90)
-                                .shadow(color: Color("btnColor").opacity(0.25),
-                                        radius: 10, x: 0, y: 2)
-                            
-                            Image(systemName: "plus")
-                                .font(.system(size: 30, weight: .bold))
-                                .foregroundColor(.white)
+                    TabView(selection: $currentIndex) {
+                        ForEach(months.indices, id: \.self) { index in
+                            MonthCard(
+                                monthDate: months[index],
+                                isCurrent: index == 0
+                            )
+                            .tag(index)
                         }
                     }
-                    .padding(.trailing, 32)
-                    .padding(.bottom, 40)
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    .frame(height: 340)
+                    
+                    Spacer()
+                    
+                    HStack {
+                        Spacer()
+                        
+                        Button {
+                            showNotificationAlert = true
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .fill(Color("btnColor"))
+                                    .frame(width: 90, height: 90)
+                                    .shadow(color: Color("btnColor").opacity(0.25),
+                                            radius: 10, x: 0, y: 2)
+                                
+                                Image(systemName: "plus")
+                                    .font(.system(size: 30, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .padding(.trailing, 32)
+                        .padding(.bottom, 40)
+                    }
                 }
             }
-        }
-        .sheet(isPresented: $showSheet) {
-            sheetView()
-        }
-        .alert("Enable Notifications", isPresented: $showNotificationAlert) {
-            Button("Yes") {
-                NotificationManager.shared.requestAuthorization()
-                showSheet = true
+            .sheet(isPresented: $showSheet) {
+                sheetView()
             }
-            Button("Later", role: .cancel) {
-                showSheet = true
+            .alert("Enable Notifications", isPresented: $showNotificationAlert) {
+                Button("Yes") {
+                    NotificationManager.shared.requestAuthorization()
+                    showSheet = true
+                }
+                Button("Later", role: .cancel) {
+                    showSheet = true
+                }
+            } message: {
+                Text("We’ll remind you on the days you have tasks.")
             }
-        } message: {
-            Text("We’ll remind you on the days you have tasks.")
+            .toolbar {      // ← CORRECT PLACE
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        navigateHome = true
+                    } label: {
+                        HStack(spacing: 1) {
+                            Image(systemName: "house.fill")
+                            Text("Home")
+                        }
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Color("btnColor"))
+                    }
+                }
+            }
+            NavigationLink(
+                   "",
+                   destination: HomeView(),
+                   isActive: $navigateHome
+               )
+               .hidden()
         }
     }
 }
-
 #Preview {
     CalendarCarouselView()
 }

@@ -101,7 +101,7 @@ struct sheetView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     
-    @State private var goHome: Bool = false
+
     
     var body: some View {
         ZStack {
