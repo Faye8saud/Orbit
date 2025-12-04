@@ -90,6 +90,12 @@ struct sheetView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     
+    @Binding var navigateHome: Bool
+    init(navigateHome: Binding<Bool> = .constant(false)) {
+           _navigateHome = navigateHome
+       }
+
+    
     @State private var selectedType: String? = "meeting"
     @State private var currentStep: Int = 1
     
@@ -119,8 +125,8 @@ struct sheetView: View {
             }
             .animation(.easeInOut, value: currentStep)
         }
-        .alert("تنبيه", isPresented: $showAlert) {
-            Button("حسناً", role: .cancel) { }
+        .alert("Alert", isPresented: $showAlert) {
+            Button("Okey", role: .cancel) { }
         } message: {
             Text(alertMessage)
         }
@@ -209,7 +215,7 @@ struct sheetView: View {
                 VStack(spacing: 20) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Task Name")
-                            .font(.system(size: 20 , weight: .semibold))
+                            .font(.system(size: 17 , weight: .semibold))
                         
                         TextField("Enter the task name here", text: $name)
                             .padding()
@@ -224,7 +230,7 @@ struct sheetView: View {
                     HStack(spacing: 20){
                             Text("Date")
                                 .multilineTextAlignment(.leading)
-                                .font(.system(size: 20 , weight: .semibold))
+                                .font(.system(size: 16 , weight: .semibold))
                             
                             DatePicker(
                                 "",
@@ -241,7 +247,7 @@ struct sheetView: View {
                     
                     VStack(alignment: .leading, spacing: 70) {
                         Text("Time")
-                            .font(.system(size: 20 , weight: .semibold))
+                            .font(.system(size: 17 , weight: .semibold))
                         
                         DatePicker(
                             "",
@@ -256,7 +262,7 @@ struct sheetView: View {
                         
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Description")
-                                .font(.system(size: 16 , weight: .semibold))
+                                .font(.system(size: 17 , weight: .semibold))
                             
                             ZStack(alignment: .topLeading) {
                                 TextEditor(text: $description)
@@ -275,12 +281,13 @@ struct sheetView: View {
                     
                     Button(action: {
                         if saveTask() {
+                            navigateHome = true
                             dismiss()
                         }
                     }) {
                         Text("Save")
                             .font(.system(size: 18, weight: .semibold))
-                            .frame(width: 200, height: 50)
+                            .frame(width: 200, height: 70)
                             .background(Color("btnColor"))
                             .foregroundColor(.white)
                             .cornerRadius(40)
@@ -353,6 +360,6 @@ struct sheetView: View {
 }
 
 #Preview {
-    sheetView()
+    sheetView(navigateHome: .constant(false))
         .modelContainer(for: TaskModel.self)
 }

@@ -29,7 +29,7 @@ struct CalendarCarouselView: View {
                     .ignoresSafeArea()
                 
                 VStack {
-                    Spacer().frame(height: 80)
+                    Spacer().frame(height: 100)
                     
                     TabView(selection: $currentIndex) {
                         ForEach(months.indices, id: \.self) { index in
@@ -68,6 +68,7 @@ struct CalendarCarouselView: View {
                     }
                 }
                 
+                // نخلي النافيقيشن جزء من نفس الـ ZStack
                 NavigationLink(
                     "",
                     destination: HomeView(),
@@ -76,8 +77,9 @@ struct CalendarCarouselView: View {
                 .hidden()
             }
             .sheet(isPresented: $showSheet) {
-                sheetView()
+                sheetView(navigateHome: $navigateHome)
             }
+
             .alert("Enable Notifications", isPresented: $showNotificationAlert) {
                 Button("Yes") {
                     NotificationManager.shared.requestAuthorization()
