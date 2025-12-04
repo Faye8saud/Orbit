@@ -92,28 +92,27 @@ struct HomeView: View {
                 .ignoresSafeArea()
             
             // Top calendar button
-            
-            VStack {
-                HStack {
-                    Spacer()
-
-                    Button(action: {
-                        // TODO: Calendar action
-                    }) {
-                        Image(systemName: "calendar")
-                            .font(.system(size: 22, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(16)
-                            .glassEffect(.regular.tint(.btn).interactive())
-                            .clipShape(Circle())
-                            .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
-                    }
-                    .padding(.top, 0)
-                    .padding(.trailing, 20)
-                    .offset(y: -30)
-                }
-                Spacer()
-            }
+//            VStack {
+//                HStack {
+//                    Spacer()
+//
+//                    Button(action: {
+//                        // TODO: Calendar action
+//                    }) {
+//                        Image(systemName: "calendar")
+//                            .font(.system(size: 22, weight: .bold))
+//                            .foregroundColor(.white)
+//                            .padding(16)
+//                            .glassEffect(.regular.tint(.btn).interactive())
+//                            .clipShape(Circle())
+//                            .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
+//                    }
+//                    .padding(.top, 0)
+//                    .padding(.trailing, 20)
+//                    .offset(y: -30)
+//                }
+//                Spacer()
+//            }
 
             // Center circle with date and tasks
             centerCircleView

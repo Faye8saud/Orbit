@@ -10,11 +10,10 @@ import SwiftUI
 struct CalendarCarouselView: View {
     @State private var currentIndex: Int = 0
     @State private var showSheet: Bool = false
-    @State private var showNotificationAlert: Bool = false   // لتنبيه الإشعارات
+    @State private var showNotificationAlert: Bool = false
+    @State private var navigateHome = false
     
     private let calendar = Calendar.current
-    
-    @State private var navigateHome = false
     
     private var months: [Date] {
         let now = Date()
@@ -26,10 +25,11 @@ struct CalendarCarouselView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color("background").ignoresSafeArea()
+                Color("background")
+                    .ignoresSafeArea()
                 
                 VStack {
-                    Spacer().frame(height: 40)
+                    Spacer().frame(height: 100)
                     
                     TabView(selection: $currentIndex) {
                         ForEach(months.indices, id: \.self) { index in
@@ -67,10 +67,19 @@ struct CalendarCarouselView: View {
                         .padding(.bottom, 40)
                     }
                 }
+                
+                // نخلي النافيقيشن جزء من نفس الـ ZStack
+                NavigationLink(
+                    "",
+                    destination: HomeView(),
+                    isActive: $navigateHome
+                )
+                .hidden()
             }
             .sheet(isPresented: $showSheet) {
-                sheetView()
+                sheetView(navigateHome: $navigateHome)
             }
+
             .alert("Enable Notifications", isPresented: $showNotificationAlert) {
                 Button("Yes") {
                     NotificationManager.shared.requestAuthorization()
@@ -82,7 +91,7 @@ struct CalendarCarouselView: View {
             } message: {
                 Text("We’ll remind you on the days you have tasks.")
             }
-            .toolbar {      // ← CORRECT PLACE
+            .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         navigateHome = true
@@ -96,15 +105,10 @@ struct CalendarCarouselView: View {
                     }
                 }
             }
-            NavigationLink(
-                   "",
-                   destination: HomeView(),
-                   isActive: $navigateHome
-               )
-               .hidden()
         }
     }
 }
+
 #Preview {
     CalendarCarouselView()
 }
