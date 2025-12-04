@@ -92,6 +92,7 @@ struct HomeView: View {
                 .ignoresSafeArea()
             
             // Top calendar button
+            
             VStack {
                 HStack {
                     Spacer()
