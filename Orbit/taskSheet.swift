@@ -56,12 +56,12 @@ struct taskSheet: View {
                 //.offset(y:-100)
               
             
-            VStack(alignment: .trailing, spacing: 6) {
+            VStack(alignment: .leading, spacing: 6) {
                 
                 Text(task.name)
                     .font(.headline)
                     .foregroundColor(.btn)
-                    .multilineTextAlignment(.trailing)
+                 //   .multilineTextAlignment(.trailing)
                     .padding(10) // padding inside the box
                     .background(
                         RoundedRectangle(cornerRadius: 10)
@@ -73,11 +73,24 @@ struct taskSheet: View {
                     .padding(10)
                     .padding(.top ,10)
             }
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .frame(maxWidth: .infinity, alignment: .leading)
       
             VStack(alignment: .trailing, spacing: 10) {
 
                 HStack(alignment: .top) {
+                    Button {
+                        descriptionSpeakTapped()
+                    } label: {
+                        Image(systemName: isSpeakingDescription ? "speaker.wave.3.fill" : "speaker.wave.2")
+                            .font(.system(size: 20))
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(Color.btn)
+                            .clipShape(Circle())
+                            .shadow(radius: 3)
+                    }
+                    .padding(.trailing, 10)
+                    
                     VStack(alignment: .trailing) {
                         if task.desc.isEmpty {
                             Text("No Description")
@@ -98,31 +111,22 @@ struct taskSheet: View {
                             )
                     )
 
-                    Button {
-                        descriptionSpeakTapped()
-                    } label: {
-                        Image(systemName: isSpeakingDescription ? "speaker.wave.3.fill" : "speaker.wave.2")
-                            .font(.system(size: 20))
-                            .foregroundColor(.white)
-                            .padding(12)
-                            .background(Color.btn)
-                            .clipShape(Circle())
-                            .shadow(radius: 3)
-                    }
+               
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            .frame(maxWidth: .infinity, alignment: .leading)
             Spacer()
             
             Button(role: .destructive) {
                 showDeleteConfirm = true
             } label: {
                 Text("Delete task")
-                    .frame(maxWidth: .infinity)
-                    .padding()
+                    .font(.system(size: 20))
+                    .frame(maxWidth: 200)
+                    .padding(20)
                     .background(Color.deletred.opacity(0.9))
                     .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .cornerRadius(45)
             }
             .padding(.top, 10)
         }
@@ -170,7 +174,7 @@ struct taskSheet: View {
     let example = TaskModel(
         name: "مهمة تجريبية",
         type: "work",
-        desc: "هذا وصف بسيط للتاسك .",
+        desc: "test description",
         priority: 2,
         actionType: "openTask",
         date: .now
