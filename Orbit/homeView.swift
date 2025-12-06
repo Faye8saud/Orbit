@@ -65,11 +65,12 @@ struct HomeView: View {
 
     @State private var showSheet = false
     @State private var selectedTask: TaskModel? = nil
+
     private var todaysTasks: [TaskModel] {
         let cal = Calendar.current
         return allTasks.filter { cal.isDate($0.date, inSameDayAs: Date()) }
     }
-    
+
     // Convert tasks to menu items
     private var menuItems: [MenuItem] {
         todaysTasks.map { task in
@@ -87,78 +88,81 @@ struct HomeView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color(.background)
-                .ignoresSafeArea()
-            
-            // Top calendar button
-//            VStack {
-//                HStack {
-//                    Spacer()
-//
-//                    Button(action: {
-//                        // TODO: Calendar action
-//                    }) {
-//                        Image(systemName: "calendar")
-//                            .font(.system(size: 22, weight: .bold))
-//                            .foregroundColor(.white)
-//                            .padding(16)
-//                            .glassEffect(.regular.tint(.btn).interactive())
-//                            .clipShape(Circle())
-//                            .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
-//                    }
-//                    .padding(.top, 0)
-//                    .padding(.trailing, 20)
-//                    .offset(y: -30)
-//                }
-//                Spacer()
-//            }
+        NavigationStack {
+            ZStack {
+                Color(.background)
+                    .ignoresSafeArea()
 
-            // Center circle with date and tasks
-            centerCircleView
-            
-            // Bottom plus button
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    
-                    Button(action: {
-                        showSheet = true
-                    }) {
-                        ZStack {
-                            Circle()
-                                .fill(Color("btnColor"))
-                                .frame(width: 90, height: 90)
-                                .shadow(color: Color("btnColor").opacity(0.25),
-                                        radius: 10, x: 0, y: 2)
-                            
-                            Image(systemName: "plus")
-                                .font(.system(size: 30, weight: .bold))
+                // 🔼 Top calendar button
+                VStack {
+                    HStack {
+                        Spacer()
+
+                        NavigationLink {
+                            CalendarCarouselView(source: .home)
+                        } label: {
+                            Image(systemName: "calendar")
+                                .font(.system(size: 22, weight: .bold))
                                 .foregroundColor(.white)
+                                .padding(16)
+                                .glassEffect(.regular.tint(.btn).interactive())
+                                .clipShape(Circle())
+                                .shadow(color: .black.opacity(0.25),
+                                        radius: 4, x: 0, y: 2)
                         }
+                        .padding(.top, 0)
+                        .padding(.trailing, 20)
+                        .offset(y: -30)
                     }
-                    .padding(.trailing, 20)
-                    .padding(.bottom, 30)
+                    Spacer()
+                }
+
+                // Center circle with date and tasks
+                centerCircleView
+
+                // Bottom plus button
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+
+                        Button(action: {
+                            showSheet = true
+                        }) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color("btnColor"))
+                                    .frame(width: 90, height: 90)
+                                    .shadow(color: Color("btnColor").opacity(0.25),
+                                            radius: 10, x: 0, y: 2)
+
+                                Image(systemName: "plus")
+                                    .font(.system(size: 30, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .padding(.trailing, 20)
+                        .padding(.bottom, 30)
+                    }
                 }
             }
         }
+        // 👇 keep your sheets & onAppear outside NavigationStack
         .sheet(isPresented: $showSheet) {
             sheetView()
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
-
         }
         .sheet(item: $selectedTask) { task in
             taskSheet(task: task)
-                .presentationDetents([ .large])
+                .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }
         .onAppear {
             printTaskDebugInfo()
         }
     }
-    
+
     // MARK: - Center Circle View
     private var centerCircleView: some View {
         ZStack {
@@ -177,7 +181,7 @@ struct HomeView: View {
                 )
                 .frame(width: 300, height: 300)
                 .blur(radius: 6)
-            
+
             Circle()
                 .fill(
                     LinearGradient(
@@ -192,21 +196,21 @@ struct HomeView: View {
                 .frame(width: 330, height: 330)
                 .shadow(color: .black.opacity(0.2), radius: 12, x: 4, y: 8)
                 .blur(radius: 1)
-            
+
             Text(Date().todayString)
                 .font(.system(size: 32, weight: .medium))
                 .foregroundColor(Color.black.opacity(0.7))
-            
+
             // Circular menu buttons
             CircularMenuView(items: menuItems)
         }
     }
-    
+
     // MARK: - Debug Helper
     private func printTaskDebugInfo() {
         print("📊 Total tasks in database: \(allTasks.count)")
         print("📅 Today's tasks: \(todaysTasks.count)")
-        
+
         for task in allTasks {
             print("  - \(task.name) | Type: \(task.type) | Date: \(task.date)")
         }
@@ -217,3 +221,4 @@ struct HomeView: View {
     HomeView()
         .modelContainer(for: TaskModel.self)
 }
+

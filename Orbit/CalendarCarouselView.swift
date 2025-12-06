@@ -7,11 +7,18 @@
 
 import SwiftUI
 
+enum CalendarSource {
+    case home
+    case mainHome
+}
 struct CalendarCarouselView: View {
+    let source: CalendarSource
+    
     @State private var currentIndex: Int = 0
     @State private var showSheet: Bool = false
     @State private var showNotificationAlert: Bool = false
     @State private var navigateHome = false
+    @State private var navigateMainHome = false
     
     private let calendar = Calendar.current
     
@@ -75,11 +82,16 @@ struct CalendarCarouselView: View {
                     isActive: $navigateHome
                 )
                 .hidden()
+                NavigationLink("",
+                               destination: mainHomeView(),
+                               isActive: $navigateMainHome)   // 👈 NEW
+                .hidden()
+                
             }
             .sheet(isPresented: $showSheet) {
                 sheetView(navigateHome: $navigateHome)
             }
-
+            
             .alert("Enable Notifications", isPresented: $showNotificationAlert) {
                 Button("Yes") {
                     NotificationManager.shared.requestAuthorization()
@@ -94,21 +106,32 @@ struct CalendarCarouselView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        navigateHome = true
-                    } label: {
-                        HStack(spacing: 1) {
-                            Image(systemName: "house.fill")
-                            Text("Home")
+                        switch source {
+                        case .home:
+                            navigateHome = true
+                        case .mainHome:
+                            navigateMainHome = true
                         }
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(Color("btnColor"))
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(Color("btnColor"))
+                            .padding(8)
+                            .background(Color.white)
+                            .clipShape(Capsule())
+                            .shadow(radius: 2)
                     }
                 }
             }
         }
     }
-}
-
-#Preview {
-    CalendarCarouselView()
+    
+    // 👇 THIS MUST BE OUTSIDE THE VIEW
+    struct CalendarCarouselView_Previews: PreviewProvider {
+        static var previews: some View {
+            NavigationStack {
+                CalendarCarouselView(source: .home)
+            }
+        }
+    }
 }

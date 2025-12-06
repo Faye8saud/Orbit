@@ -178,7 +178,7 @@ struct OnboardingView: View {
         // هنا نعرض الكالندر فول سكرين إذا showCalendar = true
         .fullScreenCover(isPresented: $showCalendar) {
             NavigationStack {
-                CalendarCarouselView()
+                mainHomeView()
             }
         }
     }
