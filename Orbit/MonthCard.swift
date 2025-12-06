@@ -4,13 +4,13 @@
 //
 //  Created by Samar A on 10/06/1447 AH.
 //
-
 import SwiftUI
 
 struct MonthCard: View {
     let monthDate: Date
     let isCurrent: Bool
-    
+    let tasks: [TaskModel]
+
     private let calendar = Calendar.current
     
     var body: some View {
@@ -22,11 +22,10 @@ struct MonthCard: View {
         let monthName = formatter.string(from: monthDate)
         let year = calendar.component(.year, from: monthDate)
         
-        return VStack(spacing: 18) {
-            HStack{
-                Text("\(monthName)\(String(year))")
-                .font(.system(size: 20 , weight: .semibold))
-                   
+        return VStack(spacing: 11) {
+            HStack {
+                Text("\(monthName) \(String(year))")
+                    .font(.system(size: 18 , weight: .semibold))
             }
             
             HStack {
@@ -37,14 +36,12 @@ struct MonthCard: View {
                 }
             }
             
-            VStack(spacing: 11) {
+            VStack(spacing: 9) {
                 ForEach(days, id: \.self) { week in
                     HStack {
                         ForEach(week, id: \.self) { day in
                             dayView(for: day)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                  
-
+                                .frame(maxWidth: .infinity, alignment: .center)
                         }
                     }
                 }
@@ -54,30 +51,49 @@ struct MonthCard: View {
         }
         .padding(16)
         .frame(width: 320, height: 320)
-        .background(Color("Color1"))
+        .background(Color("ButtonColor"))
         .cornerRadius(32)
         .shadow(radius: isCurrent ? 6 : 0)
         .opacity(isCurrent ? 1.0 : 0.4)
         .allowsHitTesting(isCurrent)
-        
     }
     
     private func dayView(for date: Date?) -> some View {
         let isToday = date.map { calendar.isDateInToday($0) } ?? false
         
+        let tasksForDay: [TaskModel] =
+            date.map { day in
+                tasks.filter { calendar.isDate($0.date, inSameDayAs: day) }
+            } ?? []
+        
+        let dotColors: [Color] = tasksForDay.compactMap { task in
+            TaskHelpers.allTypes[task.type]?.color
+        }
+        
         return Group {
             if let date = date {
-                Text("\(calendar.component(.day, from: date))")
-                    .font(.system(size: 14))
-                    .frame(width: 28, height: 28)
-                    .background(
-                        Circle()
-                            .fill(isToday ? Color("background").opacity(0.3) : .clear)
-                    )
-                    .overlay(
-                        Circle()
-                            .stroke(isToday ? Color("background") : .clear, lineWidth: 0.3)
-                    )
+                VStack(spacing: 3) {
+                    Text("\(calendar.component(.day, from: date))")
+                        .font(.system(size: 14))
+                        .frame(width: 28, height: 28)
+                        .background(
+                            Circle()
+                                .fill(isToday ? Color("background").opacity(0.3) : .clear)
+                        )
+                        .overlay(
+                            Circle()
+                                .stroke(isToday ? Color("background") : .clear, lineWidth: 0.3)
+                        )
+                    
+                    HStack(spacing: 2) {
+                        ForEach(Array(dotColors.prefix(3)).indices, id: \.self) { index in
+                            Circle()
+                                .fill(dotColors[index])
+                                .frame(width: 4, height: 4)
+                        }
+                    }
+                    .frame(height: 6)
+                }
             } else {
                 Text("")
                     .frame(width: 28, height: 28)
@@ -118,5 +134,5 @@ struct MonthCard: View {
 }
 
 #Preview {
-    MonthCard(monthDate: Date(), isCurrent: true)
+    MonthCard(monthDate: Date(), isCurrent: true, tasks: [])
 }

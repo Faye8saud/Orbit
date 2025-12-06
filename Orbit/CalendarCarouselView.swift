@@ -4,21 +4,16 @@
 //
 //  Created by Samar A on 10/06/1447 AH.
 //
-
 import SwiftUI
+import SwiftData
 
-enum CalendarSource {
-    case home
-    case mainHome
-}
 struct CalendarCarouselView: View {
-    let source: CalendarSource
-    
+    @Query(sort: \TaskModel.date) private var tasks: [TaskModel]
+
     @State private var currentIndex: Int = 0
     @State private var showSheet: Bool = false
     @State private var showNotificationAlert: Bool = false
     @State private var navigateHome = false
-    @State private var navigateMainHome = false
     
     private let calendar = Calendar.current
     
@@ -42,13 +37,26 @@ struct CalendarCarouselView: View {
                         ForEach(months.indices, id: \.self) { index in
                             MonthCard(
                                 monthDate: months[index],
-                                isCurrent: index == 0
+                                isCurrent: index == currentIndex,
+                                tasks: tasks
                             )
                             .tag(index)
                         }
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     .frame(height: 340)
+                    .padding(.horizontal, 16)
+                    
+                    HStack(spacing: 8) {
+                        ForEach(months.indices, id: \.self) { index in
+                            Circle()
+                                .fill(index == currentIndex ? Color("btnColor") : Color("btnColor").opacity(0.25))
+                                .frame(width: index == currentIndex ? 10 : 6,
+                                       height: index == currentIndex ? 10 : 6)
+                                .animation(.easeInOut(duration: 0.2), value: currentIndex)
+                        }
+                    }
+                    .padding(.top, 8)
                     
                     Spacer()
                     
@@ -75,23 +83,16 @@ struct CalendarCarouselView: View {
                     }
                 }
                 
-                // نخلي النافيقيشن جزء من نفس الـ ZStack
                 NavigationLink(
                     "",
                     destination: HomeView(),
                     isActive: $navigateHome
                 )
                 .hidden()
-                NavigationLink("",
-                               destination: mainHomeView(),
-                               isActive: $navigateMainHome)   // 👈 NEW
-                .hidden()
-                
             }
             .sheet(isPresented: $showSheet) {
                 sheetView(navigateHome: $navigateHome)
             }
-            
             .alert("Enable Notifications", isPresented: $showNotificationAlert) {
                 Button("Yes") {
                     NotificationManager.shared.requestAuthorization()
@@ -106,32 +107,22 @@ struct CalendarCarouselView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        switch source {
-                        case .home:
-                            navigateHome = true
-                        case .mainHome:
-                            navigateMainHome = true
-                        }
+                        navigateHome = true
                     } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(Color("btnColor"))
-                            .padding(8)
-                            .background(Color.white)
-                            .clipShape(Capsule())
-                            .shadow(radius: 2)
+                        HStack(spacing: 1) {
+                            Image(systemName: "house.fill")
+                            Text("Home")
+                        }
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Color("btnColor"))
                     }
                 }
             }
         }
     }
-    
-    // 👇 THIS MUST BE OUTSIDE THE VIEW
-    struct CalendarCarouselView_Previews: PreviewProvider {
-        static var previews: some View {
-            NavigationStack {
-                CalendarCarouselView(source: .home)
-            }
-        }
-    }
+}
+
+#Preview {
+    CalendarCarouselView()
+        .modelContainer(for: TaskModel.self)
 }

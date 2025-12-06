@@ -118,7 +118,7 @@ struct OnboardingView: View {
                                     )
                                     .foregroundColor(
                                         currentPage == index
-                                        ? Color("Color1")
+                                        ? Color("Color")
                                         : .gray.opacity(0.4)
                                     )
                             }
@@ -139,17 +139,17 @@ struct OnboardingView: View {
                             } label: {
                                 ZStack {
                                     Circle().fill(.ultraThinMaterial)
-                                    Circle().fill(Color("btnColor"))
+                                    Circle().fill(Color("ButtonColor"))
                                     Image("arrow")
                                         .renderingMode(.template)
                                         .resizable()
                                         .scaledToFit()
                                         .foregroundColor(Color("background"))
-                                        .frame(width: 60, height: 60)
+                                        .frame(width: 40, height: 40)
                                 }
                             }
-                            .frame(width: 90, height: 90)
-                            .shadow(color: Color("Color").opacity(0.25),
+                            .frame(width: 80, height: 80)
+                            .shadow(color: Color("ButtonColor").opacity(0.25),
                                     radius: 10, x: 0, y: 2)
                         }
                     } else {
@@ -162,10 +162,10 @@ struct OnboardingView: View {
                                 Text("Start")
                                     .font(.system(size: 18, weight: .semibold))
                                     .frame(width: 200, height: 70)
-                                    .background(Color("btnColor"))
+                                    .background(Color("ButtonColor"))
                                     .foregroundColor(.white)
                                     .cornerRadius(50)
-                                    .shadow(color: Color("btnColor").opacity(0.25),
+                                    .shadow(color: Color("ButtonColor").opacity(0.25),
                                             radius: 10, x: 0, y: 2)
                             }
                         }
