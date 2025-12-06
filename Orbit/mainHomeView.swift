@@ -22,8 +22,8 @@ struct mainHomeView: View {
             VStack {
                 HStack {
                     Spacer()
-                    Button {
-                        // calendar tapped
+                    NavigationLink {
+                        CalendarCarouselView(source: .mainHome)
                     } label: {
                         Image(systemName: "calendar")
                             .font(.system(size: 22, weight: .medium))

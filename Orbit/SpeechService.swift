@@ -16,12 +16,12 @@ final class SpeechService: NSObject, AVSpeechSynthesizerDelegate, @unchecked Sen
         synthesizer.delegate = self
     }
 
-    /// Start speaking some text using Apple's built-in voice
+
     func speak(_ text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
-        // If already speaking, stop first
+        
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
         }
@@ -31,12 +31,11 @@ final class SpeechService: NSObject, AVSpeechSynthesizerDelegate, @unchecked Sen
         synthesizer.speak(utterance)
     }
 
-    /// Stop speaking immediately
     func stop() {
         synthesizer.stopSpeaking(at: .immediate)
     }
 
-    /// Expose whether the synthesizer is currently speaking
+  
     var isSpeaking: Bool {
         synthesizer.isSpeaking
     }
