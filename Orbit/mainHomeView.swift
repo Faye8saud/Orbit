@@ -52,7 +52,7 @@ struct mainHomeView: View {
                     }
                     .padding(.trailing, 70)
                     .padding(.top, 24)
-                    .offset(y: 20)
+                    .offset(y: 10)
                 }
                 Spacer()
             }
@@ -120,12 +120,12 @@ struct mainHomeView: View {
                                 ZStack {
                                     Circle()
                                         .fill(task.taskColor)
-                                        .frame(width: task.size, height: task.size)
+                                        .frame(width: 90, height: 90)
                                         .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 6)
 
                                     Image(systemName: task.icon)
                                         .foregroundColor(.white)
-                                        .font(.system(size: task.size * 0.35, weight: .bold))
+                                        .font(.system(size: 90 * 0.35, weight: .bold))
                                 }
                             }
                             .offset(y: -60)
