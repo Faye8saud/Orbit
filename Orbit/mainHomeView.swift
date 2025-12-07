@@ -9,8 +9,8 @@ import SwiftData
 
 struct mainHomeView: View {
     @State private var navigate = false
-    @State private var showTaskSheet = false
     @State private var addTaskSheet = false
+    @State private var selectedTask: TaskModel? = nil
 
     @Environment(\.modelContext) private var context
     @Query(sort: \TaskModel.date) private var allTasks: [TaskModel]
@@ -114,7 +114,7 @@ struct mainHomeView: View {
                         // ------------------------------------------------
                         if let task = nextTask {
                             Button {
-                                showTaskSheet = true
+                                selectedTask = task
                             } label: {
                                 ZStack {
                                     Circle()
@@ -162,11 +162,12 @@ struct mainHomeView: View {
                 }
             }
         }
-        .sheet(isPresented: $showTaskSheet) {
-            taskSheet()
+        .sheet(item: $selectedTask)  { task in
+            taskSheet(task: task)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }
+            
         .sheet(isPresented: $addTaskSheet) {
             sheetView()
                 .presentationDetents([.large])
@@ -182,3 +183,4 @@ struct mainHomeView: View {
 #Preview {
     mainHomeView()
 }
+
