@@ -99,7 +99,7 @@ struct HomeView: View {
                         Spacer()
 
                         NavigationLink {
-                            CalendarCarouselView(source: .home)
+                            CalendarCarouselView()
                         } label: {
                             Image(systemName: "calendar")
                                 .font(.system(size: 22, weight: .bold))

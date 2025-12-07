@@ -23,7 +23,7 @@ struct mainHomeView: View {
                 HStack {
                     Spacer()
                     NavigationLink {
-                        CalendarCarouselView(source: .mainHome)
+                       CalendarCarouselView()
                     } label: {
                         Image(systemName: "calendar")
                             .font(.system(size: 22, weight: .medium))
