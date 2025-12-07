@@ -50,7 +50,6 @@ struct OnboardingView: View {
             
             VStack {
                 
-                // MARK: - Skip
                 HStack {
                     Spacer()
                     
@@ -60,7 +59,6 @@ struct OnboardingView: View {
                         Text("Skip")
                             .font(.system(size: 18, weight: .regular))
                             .foregroundColor(.gray)
-                            .underline(true, color: .gray.opacity(0.6))
                     }
                 }
                 .padding(.top, 20)
@@ -137,7 +135,7 @@ struct OnboardingView: View {
                             } label: {
                                 ZStack {
                                     Circle().fill(.ultraThinMaterial)
-                                    Circle().fill(Color("ButtonColor"))
+                                    Circle().fill(Color("btnColor"))
                                     Image("arrow")
                                         .renderingMode(.template)
                                         .resizable()
@@ -147,7 +145,7 @@ struct OnboardingView: View {
                                 }
                             }
                             .frame(width: 80, height: 80)
-                            .shadow(color: Color("ButtonColor").opacity(0.25),
+                            .shadow(color: Color("btnColor").opacity(0.25),
                                     radius: 10, x: 0, y: 2)
                         }
                     } else {
@@ -160,10 +158,10 @@ struct OnboardingView: View {
                                 Text("Start")
                                     .font(.system(size: 18, weight: .semibold))
                                     .frame(width: 200, height: 70)
-                                    .background(Color("ButtonColor"))
+                                    .background(Color("btnColor"))
                                     .foregroundColor(.white)
                                     .cornerRadius(50)
-                                    .shadow(color: Color("ButtonColor").opacity(0.25),
+                                    .shadow(color: Color("btnColor").opacity(0.25),
                                             radius: 10, x: 0, y: 2)
                             }
                         }
