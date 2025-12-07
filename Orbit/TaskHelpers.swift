@@ -38,10 +38,9 @@ struct TaskHelpers {
 
     static func size(for priority: Int) -> Double {
         switch priority {
-        case 1: return 50
-        case 2: return 70
-        case 3: return 90
-        default: return 60
+        case 1: return 95
+        case 2: return 65
+        default: return 45
         }
     }
 }

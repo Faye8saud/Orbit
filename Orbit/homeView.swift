@@ -5,6 +5,7 @@
 //  Updated with improved code reusability
 //
 
+
 import SwiftUI
 import SwiftData
 
@@ -31,7 +32,7 @@ extension Date {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US")
         formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.dateFormat = "hh:mm a" 
+        formatter.dateFormat = "hh:mm a"
         return formatter.string(from: self)
     }
 }
@@ -109,17 +110,17 @@ struct HomeView: View {
                             CalendarCarouselView()
                         } label: {
                             Image(systemName: "calendar")
-                                .font(.system(size: 25, weight: .bold))
+                                .font(.system(size: 22, weight: .bold))
                                 .foregroundColor(.white)
                                 .padding(16)
-                                .glassEffect(.regular.tint(Color("btnColor")).interactive())
+                                .glassEffect(.regular.tint(.btn).interactive())
                                 .clipShape(Circle())
                                 .shadow(color: .black.opacity(0.25),
                                         radius: 4, x: 0, y: 2)
                         }
                         .padding(.top, 0)
                         .padding(.trailing, 20)
-                        .offset(y: 2)
+                        .offset(y: -30)
                     }
                     Spacer()
                 }
@@ -140,8 +141,10 @@ struct HomeView: View {
                                 Circle()
                                     .fill(Color("btnColor"))
                                     .frame(width: 90, height: 90)
+                                    .shadow(color: Color("btnColor").opacity(0.25),
+                                            radius: 10, x: 0, y: 2)
+
                                 Image(systemName: "plus")
-                                    .frame(width: 90, height: 90)
                                     .font(.system(size: 30, weight: .bold))
                                     .foregroundColor(.white)
                             }

@@ -65,7 +65,6 @@ struct TaskTypeCircle: View {
             .padding(-10)
     }
 }
-
 @ViewBuilder
 func typeButton(
     icon: String,
@@ -106,8 +105,42 @@ struct sheetView: View {
     
     @State private var showAlert = false
     @State private var alertMessage = ""
-    
+    @State private var selectedPriority: Int = 2 // default medium
 
+    
+    @ViewBuilder
+    private func priorityCircle(priority: Int, size: CGFloat, typeID: String?) -> some View {
+        
+        let config = TaskHelpers.allTypes[typeID ?? ""]
+
+
+        Button {
+            selectedPriority = priority
+        } label: {
+            ZStack {
+                Circle()
+                    .fill(
+                        selectedPriority == priority
+                        ? (config?.color ?? Color.gray).opacity(0.9)
+                        : Color.gray.opacity(0.35)
+                    )
+                    .frame(width: size, height: size)
+                    .overlay(
+                        Circle()
+                            .stroke(
+                                selectedPriority == priority
+                                ? (config?.color ?? Color.gray)
+                                : Color.clear,
+                                lineWidth: 4
+                            )
+                    )
+                
+                Image(systemName: config?.icon ?? "flag.fill")
+                    .foregroundColor(.white)
+                    .font(.system(size: size * 0.28))
+            }
+        }
+    }
     
     var body: some View {
         ZStack {
@@ -182,6 +215,24 @@ struct sheetView: View {
         .padding(.top, 70)
     }
     
+    // MARK: - Priority Selection UI
+    var prioritySelectionView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Priority")
+                .font(.system(size: 17, weight: .semibold))
+                .padding(.leading, -20)
+
+            HStack(spacing: 30) {
+                // High
+                priorityCircle(priority: 3, size: 60, typeID: selectedType)
+                priorityCircle(priority: 2, size: 80, typeID: selectedType)
+                priorityCircle(priority: 1, size: 110, typeID: selectedType)
+            }
+            .padding(.vertical, -10)
+        }
+    }
+
+    
     // MARK: - Step 2 View
     var taskDetailsView: some View {
         ScrollView {
@@ -190,15 +241,14 @@ struct sheetView: View {
                     Button(action: { currentStep = 1 }) {
                         HStack(spacing: 6) {
                             Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.background)
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.btn)
                            
                         }
-                        .foregroundColor(.white)
                         .padding(.vertical, 15)
                         .padding(.horizontal, 18)
-                        .glassEffect(.regular.tint(.btn).interactive())
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                      //  .glassEffect(.regular.tint(.btn).interactive())
+                      //  .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
                     .padding(.leading, 4)
                     .padding(.top, 15)
@@ -207,11 +257,9 @@ struct sheetView: View {
                         //.padding(.horizontal,30)
                 }
 
-                if let id = selectedType, let type = TaskHelpers.allTypes[id] {
-                    TaskTypeCircle(icon: type.icon, color: type.color)
-                        .offset(y:-10)
-                }
                
+                prioritySelectionView
+                
                 VStack(spacing: 20) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Task Name")
@@ -239,6 +287,7 @@ struct sheetView: View {
                             )
                             .labelsHidden()
                             .datePickerStyle(.compact)
+                            .tint(.btn)
                            
                            Spacer()
                     }
@@ -349,7 +398,7 @@ struct sheetView: View {
             name: name,
             type: taskType,
             desc: description,
-            priority: 3,
+            priority: selectedPriority,
             distance: 160,
             actionType: "openTask",
             date: finalDate
