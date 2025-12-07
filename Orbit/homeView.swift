@@ -120,7 +120,7 @@ struct HomeView: View {
                         }
                         .padding(.top, 0)
                         .padding(.trailing, 20)
-                        .offset(y: -30)
+                         .offset(y: -30)
                     }
                     Spacer()
                 }

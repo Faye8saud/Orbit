@@ -50,8 +50,9 @@ struct mainHomeView: View {
                             .clipShape(Circle())
                             .shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 4)
                     }
-                    .padding(.trailing, 60)
+                    .padding(.trailing, 70)
                     .padding(.top, 24)
+                    .offset(y: 20)
                 }
                 Spacer()
             }
@@ -135,7 +136,7 @@ struct mainHomeView: View {
                             } label: {
                                 Circle()
                                     .fill(Color(.btn))
-                                    .frame(width: 120, height: 120)
+                                    .frame(width: 90, height: 90)
                                     .overlay(
                                         Image(systemName: "plus")
                                             .font(.system(size: 40))
@@ -151,12 +152,12 @@ struct mainHomeView: View {
                         Text(Date().todayString)
                             .font(.system(size: 30, weight: .medium))
                             .foregroundColor(Color.btn.opacity(0.8))
-                            .offset(y: -50)
+                            .offset(y: -20)
 
                         Text(Date().timeString)
                             .font(.system(size: 20))
                             .foregroundColor(Color.btn)
-                            .offset(y: -50)
+                            .offset(y: -10)
                     }
                     .padding(.bottom, 50)
                 }
