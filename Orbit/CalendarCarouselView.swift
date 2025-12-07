@@ -62,27 +62,6 @@ struct CalendarCarouselView: View {
                     
                     HStack {
                         Spacer()
-                        
-                        //  Button {
-                        //  showNotificationAlert = true
-                        //                        } label: {
-                        //                            ZStack {
-                        //                                Circle()
-                        //                                    .fill(Color("btnColor"))
-                        //                                    .frame(width: 90, height: 90)
-                        //                                    .shadow(color: Color("btnColor").opacity(0.25),
-                        //                                            radius: 10, x: 0, y: 2)
-                        //
-                        //                                Image(systemName: "plus")
-                        //                                    .font(.system(size: 30, weight: .bold))
-                        //                                    .foregroundColor(.white)
-                        //                            }
-                        //                        }
-                        //                        .padding(.trailing, 32)
-                        //                        .padding(.bottom, 40)
-                        //                    }
-                        //                }
-                        //
                         NavigationLink(
                             "",
                             destination: HomeView(),
@@ -104,18 +83,7 @@ struct CalendarCarouselView: View {
                     } message: {
                         Text("We’ll remind you on the days you have tasks.")
                     }
-                    //            .toolbar {
-                    //                ToolbarItem(placement: .topBarLeading) {
-                    //                    Button {
-                    //                        navigateHome = true
-                    //                    } label: {
-                    //                        HStack(spacing: 1) {
-                    //                            Image(systemName: "house.fill")
-                    //                            Text("Home")
-                    //                        }
-                    //                        .font(.system(size: 16, weight: .semibold))
-                    //                        .foregroundColor(Color("btnColor"))
-                    //                    }
+                
                 }
             }
         }

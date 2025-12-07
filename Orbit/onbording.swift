@@ -29,10 +29,10 @@ struct OnboardingView: View {
     
     @State private var currentPage: Int = 0
     @State private var selectedThemeIndex: Int = 0
-    @State private var showCalendar: Bool = false   // هنا نتحكم في إظهار صفحة الكالندر
+    @State private var showCalendar: Bool = false
     
     private var lastIndex: Int {
-        pages.count   // آخر صفحة = صفحة اختيار الألوان
+        pages.count
     }
     
     var body: some View {
@@ -105,7 +105,6 @@ struct OnboardingView: View {
                 // MARK: - Dots + Bottom Button
                 VStack(spacing: 20) {
                     
-                    // المؤشرات
                     HStack(spacing: 8) {
                         ForEach(0 ..< pages.count + 1, id: \.self) { index in
                             Button {
@@ -127,7 +126,6 @@ struct OnboardingView: View {
                     }
                     .padding(.bottom, 30)
                     
-                    // زر السهم أو Start
                     if currentPage != lastIndex {
                         HStack {
                             Spacer()
@@ -175,7 +173,6 @@ struct OnboardingView: View {
                 .padding(.bottom, 20)
             }
         }
-        // هنا نعرض الكالندر فول سكرين إذا showCalendar = true
         .fullScreenCover(isPresented: $showCalendar) {
             NavigationStack {
                 mainHomeView()

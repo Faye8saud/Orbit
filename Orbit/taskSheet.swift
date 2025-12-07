@@ -124,7 +124,7 @@ struct taskSheet: View {
                     .font(SwiftUI.Font.system(size: 20, weight: .regular))
                     .frame(maxWidth: 200)
                     .padding(20)
-                    .background(SwiftUI.Color(.background))
+                    .background(Color(.deletred))
                     .foregroundColor(.white)
                     .cornerRadius(45)
             }
