@@ -27,6 +27,13 @@ extension Date {
         formatter.dateFormat = "d MMMM"
         return formatter.string(from: self)
     }
+    var timeString: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US")
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.dateFormat = "hh:mm a" 
+        return formatter.string(from: self)
+    }
 }
 
 // MARK: - Circular Menu View
@@ -66,7 +73,7 @@ struct HomeView: View {
     @State private var showSheet = false
     @State private var selectedTask: TaskModel? = nil
 
-    private var todaysTasks: [TaskModel] {
+     var todaysTasks: [TaskModel] {
         let cal = Calendar.current
         return allTasks.filter { cal.isDate($0.date, inSameDayAs: Date()) }
     }

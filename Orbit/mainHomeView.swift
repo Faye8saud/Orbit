@@ -5,10 +5,27 @@
 //  Created by Fay  on 27/11/2025.
 //
 import SwiftUI
+import SwiftData
 
 struct mainHomeView: View {
     @State private var navigate = false
     @State private var showTaskSheet = false
+    @State private var addTaskSheet = false
+
+    @Environment(\.modelContext) private var context
+    @Query(sort: \TaskModel.date) private var allTasks: [TaskModel]
+
+    // MARK: - Find next upcoming task
+    private var nextTask: TaskModel? {
+        let now = Date()
+        let futureTasks = allTasks.filter { $0.date.timeIntervalSince(now) >= 0 }
+        return futureTasks.min(by: { $0.date < $1.date })
+    }
+    
+    private var todaysTasks: [TaskModel] {
+        let calendar = Calendar.current
+        return allTasks.filter { calendar.isDate($0.date, inSameDayAs: Date()) }
+    }
     
     var body: some View {
         NavigationStack {
@@ -44,37 +61,34 @@ struct mainHomeView: View {
             // --------------------------------------------
             VStack {
                 Spacer().frame(height: 300)
-                
-                Button {
-                    navigate = true
-                } label: {
-                    Image(systemName: "minus.magnifyingglass")
-                        .font(.system(size: 30, weight: .medium))
-                        .foregroundColor(Color.btn.opacity(0.8))
-                        .frame(width: 150, height: 55)
-                        .background(
-                            RoundedRectangle(cornerRadius: 28)
-                                .fill(.white.opacity(0.8))
-                                .blur(radius: 0.5)
-                        )
-                        .glassEffect(.regular.tint(.lightyellow))
-                        .shadow(color: .black.opacity(0.1), radius: 8)
+                if !todaysTasks.isEmpty {
+                    Button { navigate = true } label: {
+                        Image(systemName: "minus.magnifyingglass")
+                            .font(.system(size: 30, weight: .medium))
+                            .foregroundColor(Color.btn.opacity(0.8))
+                            .frame(width: 150, height: 55)
+                            .background(
+                                RoundedRectangle(cornerRadius: 28)
+                                    .fill(.white.opacity(0.8))
+                                    .blur(radius: 0.5)
+                            )
+                            .glassEffect(.regular.tint(.lightyellow))
+                            .shadow(color: .black.opacity(0.1), radius: 8)
+                    }
                 }
-                
+
                 Spacer()
             }
             
             // --------------------------------------------
-            // BOTTOM HALF LARGE CIRCLE + TASK DETAILS
+            // BOTTOM CIRCLE + NEXT TASK OR PLUS BUTTON
             // --------------------------------------------
             VStack {
                 Spacer()
-                
                 VStack {
-                    Spacer() // pushes everything up
-                    
+                    Spacer()
+
                     ZStack {
-                        // BIG HALF CIRCLE
                         Circle()
                             .fill(
                                 RadialGradient(
@@ -89,35 +103,57 @@ struct mainHomeView: View {
                             )
                             .frame(width: 500, height: 550)
                             .blur(radius: 1)
-                            .offset(y: 520) // push down so only top half is visible
+                            .offset(y: 520)
                     }
-                
-                .edgesIgnoringSafeArea(.bottom)
-                    
+                    .edgesIgnoringSafeArea(.bottom)
+
                     VStack(spacing: 18) {
-                        
-                        // BIG TASK ICON CIRCLE
-                        Button {
-                            showTaskSheet = true
-                                   } label: {
-                                       Circle()
-                                           .fill(Color(.darkpinkc))
-                                           .frame(width: 120, height: 120)
-                                           .overlay(
-                                               Image(systemName: "person.fill")
-                                                   .font(.system(size: 40, weight: .medium))
-                                                   .foregroundColor(.white)
-                                           )
-                                           .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 6)
-                                   }
-                                   .offset(y: -60)
-                        
-                        Text("١٨ نوفمبر")
+
+                        // ------------------------------------------------
+                        // CONDITIONAL BUTTON (next task OR plus button)
+                        // ------------------------------------------------
+                        if let task = nextTask {
+                            Button {
+                                showTaskSheet = true
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(task.taskColor)
+                                        .frame(width: task.size, height: task.size)
+                                        .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 6)
+
+                                    Image(systemName: task.icon)
+                                        .foregroundColor(.white)
+                                        .font(.system(size: task.size * 0.35, weight: .bold))
+                                }
+                            }
+                            .offset(y: -60)
+                        }
+                        else {
+                            Button {
+                                addTaskSheet = true
+                            } label: {
+                                Circle()
+                                    .fill(Color(.btn))
+                                    .frame(width: 120, height: 120)
+                                    .overlay(
+                                        Image(systemName: "plus")
+                                            .font(.system(size: 40))
+                                            .foregroundColor(.white)
+                                    )
+                                    .shadow(color: .black.opacity(0.25),
+                                            radius: 8, x: 0, y: 6)
+                            }
+                            .offset(y: -60)
+                        }
+
+                        // Date + Time
+                        Text(Date().todayString)
                             .font(.system(size: 30, weight: .medium))
                             .foregroundColor(Color.btn.opacity(0.8))
                             .offset(y: -50)
-                        
-                        Text("٤:٣٠ مساءً")
+
+                        Text(Date().timeString)
                             .font(.system(size: 20))
                             .foregroundColor(Color.btn)
                             .offset(y: -50)
@@ -128,19 +164,21 @@ struct mainHomeView: View {
         }
         .sheet(isPresented: $showTaskSheet) {
             taskSheet()
-                .presentationDetents([.large])  // custom height
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $addTaskSheet) {
+            sheetView()
+                .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }
         .navigationDestination(isPresented: $navigate) {
-                    HomeView()
-                }
+            HomeView()
         }
-        
+        }
     }
-    
 }
 
 #Preview {
     mainHomeView()
 }
-

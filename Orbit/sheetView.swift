@@ -320,7 +320,7 @@ struct sheetView: View {
             return false
         }
         
-        // Combine date and time
+        // Combine date and time - FIXED VERSION
         let calendar = Calendar.current
         let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
         let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
@@ -332,7 +332,18 @@ struct sheetView: View {
         combinedComponents.hour = timeComponents.hour
         combinedComponents.minute = timeComponents.minute
         
-        let finalDate = calendar.date(from: combinedComponents) ?? date
+        guard let finalDate = calendar.date(from: combinedComponents) else {
+            alertMessage = "Invalid date/time combination"
+            showAlert = true
+            return false
+        }
+  
+        // Validate that the task is in the future
+        if finalDate <= Date() {
+            alertMessage = "Please select a future date and time"
+            showAlert = true
+            return false
+        }
         
         let newTask = TaskModel(
             name: name,
@@ -348,10 +359,10 @@ struct sheetView: View {
         
         do {
             try context.save()
-            print("Task saved successfully: \(newTask.name)")
+            print("Task saved successfully: \(newTask.name) at \(finalDate)")
             return true
         } catch {
-            alertMessage = "حدث خطأ أثناء حفظ المهمة: \(error.localizedDescription)"
+            alertMessage = "Error saving task: \(error.localizedDescription)"
             showAlert = true
             print("Error saving task: \(error)")
             return false

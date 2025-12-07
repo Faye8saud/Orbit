@@ -121,10 +121,10 @@ struct taskSheet: View {
                 showDeleteConfirm = true
             } label: {
                 Text("Delete task")
-                    .font(.system(size: 20))
+                    .font(SwiftUI.Font.system(size: 20, weight: .regular))
                     .frame(maxWidth: 200)
                     .padding(20)
-                    .background(Color.deletred.opacity(0.9))
+                    .background(SwiftUI.Color(.background))
                     .foregroundColor(.white)
                     .cornerRadius(45)
             }
@@ -181,3 +181,4 @@ struct taskSheet: View {
     )
     return taskSheet(task: example)
 }
+
