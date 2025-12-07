@@ -19,8 +19,8 @@ struct TaskHelpers {
     }
     
     static let allTypes: [String: TypeConfig] = [
-        "work": TypeConfig(id: "work", icon: "doc.fill", label: "عمل", color: .darkpinkc),
-        "meeting": TypeConfig(id: "meeting", icon: "person.3.fill", label: "اجتماع", color: .yellowc),
+        "work": TypeConfig(id: "work", icon: "doc.fill", label: "عمل", color: .yellowc),
+        "health": TypeConfig(id: "health", icon: "heart.text.clipboard.fill", label: "صحة", color: .darkpinkc),
         "personal": TypeConfig(id: "personal", icon: "person.fill", label: "شخصي", color: .pinkc),
         "home": TypeConfig(id: "home", icon: "house.fill", label: "منزل", color: .btn),
         "other": TypeConfig(id: "other", icon: "ellipsis", label: "اخرى", color: .lighghtGreenc)

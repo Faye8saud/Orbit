@@ -176,10 +176,10 @@ struct sheetView: View {
             
             HStack(spacing: 60) {
                 VStack {
-                    typeButton(icon: "doc.fill", label: "Work", color: .darkpinkc, id: "work", selectedType: $selectedType)
+                    typeButton(icon: "doc.fill", label: "Work", color: .yellowc, id: "work", selectedType: $selectedType)
                 }
                 VStack {
-                    typeButton(icon: "person.3.fill", label: "Meeting", color: .yellowc, id: "meeting", selectedType: $selectedType)
+                    typeButton(icon: "heart.text.clipboard.fill", label: "Health", color: .darkpinkc, id: "health", selectedType: $selectedType)
                 }
             }
             
