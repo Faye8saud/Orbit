@@ -32,7 +32,7 @@ struct OnboardingView: View {
     @State private var showCalendar: Bool = false
     
     private var lastIndex: Int {
-        pages.count
+        pages.count - 1
     }
     
     var body: some View {
@@ -50,9 +50,9 @@ struct OnboardingView: View {
             
             VStack {
                 
+                // SKIP
                 HStack {
                     Spacer()
-                    
                     Button {
                         showCalendar = true
                     } label: {
@@ -64,65 +64,60 @@ struct OnboardingView: View {
                 .padding(.top, 20)
                 .padding(.trailing, 20)
                 
+                
                 // MARK: - Pages
                 TabView(selection: $currentPage) {
-                    ForEach(0 ..< pages.count + 1, id: \.self) { index in
+                    ForEach(0 ..< pages.count, id: \.self) { index in
                         
-                        if index < pages.count {
-                            VStack(spacing: 20) {
-                                Spacer()
-                                
-                                pages[index].image
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: 350)
-                                
-                                Text(pages[index].title)
-                                    .font(.title)
-                                    .bold()
-                                
-                                Text(pages[index].description)
-                                    .font(.system(.title3, design: .rounded))
-                                    .fontWeight(.medium)
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal, 32)
-                                
-                                Spacer()
-                            }
-                            .tag(index)
-                        } else {
-                            LastOnboardingView(selectedThemeIndex: $selectedThemeIndex)
-                                .tag(index)
+                        VStack(spacing: 20) {
+                            Spacer()
+                            
+                            pages[index].image
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 350)
+                            
+                            Text(pages[index].title)
+                                .font(.title)
+                                .bold()
+                            
+                            Text(pages[index].description)
+                                .font(.system(.title3, design: .rounded))
+                                .fontWeight(.medium)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 32)
+                            
+                            Spacer()
                         }
+                        .tag(index)
                     }
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 
                 Spacer()
                 
-                // MARK: - Dots + Bottom Button
+                
                 VStack(spacing: 20) {
                     
                     HStack(spacing: 8) {
-                        ForEach(0 ..< pages.count + 1, id: \.self) { index in
-                            Button {
-                                currentPage = index
-                            } label: {
-                                Capsule()
-                                    .frame(
-                                        width: currentPage == index ? 30 : 10,
-                                        height: 12
-                                    )
-                                    .foregroundColor(
-                                        currentPage == index
-                                        ? Color("Color")
-                                        : .gray.opacity(0.4)
-                                    )
-                            }
-                            .buttonStyle(.plain)
+                        ForEach(0 ..< pages.count, id: \.self) { index in
+                            Capsule()
+                                .frame(
+                                    width: currentPage == index ? 30 : 10,
+                                    height: 12
+                                )
+                                .foregroundColor(
+                                    currentPage == index
+                                    ? Color("Color")
+                                    : .gray.opacity(0.4)
+                                )
+                                .onTapGesture {
+                                    currentPage = index
+                                }
                         }
                     }
                     .padding(.bottom, 30)
+                    
                     
                     if currentPage != lastIndex {
                         HStack {
@@ -136,6 +131,7 @@ struct OnboardingView: View {
                                 ZStack {
                                     Circle().fill(.ultraThinMaterial)
                                     Circle().fill(Color("btnColor"))
+                                    
                                     Image("arrow")
                                         .renderingMode(.template)
                                         .resizable()
@@ -148,6 +144,7 @@ struct OnboardingView: View {
                             .shadow(color: Color("btnColor").opacity(0.25),
                                     radius: 10, x: 0, y: 2)
                         }
+                        
                     } else {
                         HStack {
                             Spacer()
@@ -164,11 +161,11 @@ struct OnboardingView: View {
                                     .shadow(color: Color("btnColor").opacity(0.25),
                                             radius: 10, x: 0, y: 2)
                             }
-                        }
+                            .frame(maxWidth: .infinity, alignment: .center)                        }
                     }
                 }
                 .padding(.horizontal, 40)
-                .padding(.bottom, 20)
+                .padding(.bottom, 10)
             }
         }
         .fullScreenCover(isPresented: $showCalendar) {

@@ -10,8 +10,8 @@ import SwiftData
 struct MyApp: App {
     var body: some Scene {
         WindowGroup {
-            OnboardingView()
-           // HomeView()
+OnboardingView()
+            // HomeView()
         }
         .modelContainer(for: TaskModel.self)
     }

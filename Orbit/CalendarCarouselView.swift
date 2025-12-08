@@ -19,7 +19,7 @@ struct CalendarCarouselView: View {
     
     private var months: [Date] {
         let now = Date()
-        return (0..<3).compactMap { offset in
+        return (0..<5).compactMap { offset in
             calendar.date(byAdding: .month, value: offset, to: now)
         }
     }
@@ -71,17 +71,6 @@ struct CalendarCarouselView: View {
                     }
                     .sheet(isPresented: $showSheet) {
                         sheetView(navigateHome: $navigateHome)
-                    }
-                    .alert("Enable Notifications", isPresented: $showNotificationAlert) {
-                        Button("Yes") {
-                            NotificationManager.shared.requestAuthorization()
-                            showSheet = true
-                        }
-                        Button("Later", role: .cancel) {
-                            showSheet = true
-                        }
-                    } message: {
-                        Text("We’ll remind you on the days you have tasks.")
                     }
                 
                 }

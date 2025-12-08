@@ -13,7 +13,16 @@ class NotificationManager {
     
     private init() {}
     
-      func requestAuthorization() {
+    /// يطلب إذن النوتيفكيشن مرة وحدة بس
+    func requestAuthorizationIfNeeded() {
+        let key = "didAskForNotifications"
+        let didAskBefore = UserDefaults.standard.bool(forKey: key)
+        
+        guard !didAskBefore else {
+            print("Already asked for notifications before")
+            return
+        }
+        
         UNUserNotificationCenter.current().requestAuthorization(
             options: [.alert, .sound, .badge]
         ) { granted, error in
@@ -21,6 +30,7 @@ class NotificationManager {
                 print("Notification error: \(error.localizedDescription)")
             } else {
                 print("Notifications granted: \(granted)")
+                UserDefaults.standard.set(true, forKey: key)
             }
         }
     }
