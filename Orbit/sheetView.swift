@@ -159,7 +159,7 @@ struct sheetView: View {
             .animation(.easeInOut, value: currentStep)
         }
         .alert("Alert", isPresented: $showAlert) {
-            Button("Okey", role: .cancel) { }
+            Button("Okay", role: .cancel) { }
         } message: {
             Text(alertMessage)
         }
