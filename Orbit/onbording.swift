@@ -19,12 +19,7 @@ struct OnboardingView: View {
             title: "",
             description: "Swipe out • view all • tasks clearly",
             image: Image("image2")
-        ),
-        OnboardingPage(
-            title: "Got an emergency?",
-            description: "Tap to send  •  an apology",
-            image: Image("image3")
-        )
+    )
     ]
     
     @State private var currentPage: Int = 0
@@ -50,7 +45,7 @@ struct OnboardingView: View {
             
             VStack {
                 
-                // SKIP
+                
                 HStack {
                     Spacer()
                     Button {
@@ -65,7 +60,6 @@ struct OnboardingView: View {
                 .padding(.trailing, 20)
                 
                 
-                // MARK: - Pages
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< pages.count, id: \.self) { index in
                         

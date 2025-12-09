@@ -222,6 +222,7 @@ struct HomeView: View {
         for task in allTasks {
             print("  - \(task.name) | Type: \(task.type) | Date: \(task.date)")
         }
+        
     }
 }
 
