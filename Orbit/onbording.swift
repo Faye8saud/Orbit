@@ -108,7 +108,7 @@ struct OnboardingView: View {
                     }
                     .padding(.bottom, 30)
                     
-=                    if currentPage != lastIndex {
+                    if currentPage != lastIndex {
                         HStack {
                             Spacer()
                             
