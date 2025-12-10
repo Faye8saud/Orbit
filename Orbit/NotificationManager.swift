@@ -19,7 +19,7 @@ class NotificationManager {
         let didAskBefore = UserDefaults.standard.bool(forKey: key)
         
         guard !didAskBefore else {
-            print("Already asked for notifications before")
+            print("🔔 Already asked for notifications before")
             return
         }
         
@@ -27,37 +27,67 @@ class NotificationManager {
             options: [.alert, .sound, .badge]
         ) { granted, error in
             if let error = error {
-                print("Notification error: \(error.localizedDescription)")
+                print("❌ Notification error: \(error.localizedDescription)")
             } else {
-                print("Notifications granted: \(granted)")
+                print("✅ Notifications granted: \(granted)")
                 UserDefaults.standard.set(true, forKey: key)
             }
         }
     }
     
-    // جدولة تنبيه لليوم اللي فيه مهمة
+    /// تذكير الساعة 9 صباحًا في اليوم اللي فيه المهمة
     func scheduleTaskReminder(taskName: String, date: Date) {
-        let content = UNMutableNotificationContent()
-        content.title = "Task Reminder"
-        content.body = "You have a task today: \(taskName)"
-        content.sound = .default
+        let center = UNUserNotificationCenter.current()
         
-        // نخلي التنبيه مثلاً الساعة 9 الصباح في نفس اليوم
-        var components = Calendar.current.dateComponents([.year, .month, .day], from: date)
-        components.hour = 9
-        components.minute = 0
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-        
-        let request = UNNotificationRequest(
-            identifier: UUID().uuidString,
-            content: content,
-            trigger: trigger
-        )
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Failed to schedule: \(error.localizedDescription)")
+        // أول شيء نتأكد إن عندنا إذن
+        center.getNotificationSettings { settings in
+            guard settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional else {
+                print("❌ Notifications not allowed by user")
+                return
+            }
+            
+            let calendar = Calendar.current
+            
+            // نحدد 9 صباحًا في نفس اليوم حق المهمة
+            var components = calendar.dateComponents([.year, .month, .day], from: date)
+            components.hour = 9
+            components.minute = 0
+            
+            guard let reminderDate = calendar.date(from: components) else {
+                print("❌ Failed to build reminder date")
+                return
+            }
+            
+            // لو 9 صباح اليوم هذا عدّت، بنطنش التذكير عشان ما يكون في الماضي
+            if reminderDate <= Date() {
+                print("⚠️ 9am for this day is already in the past, will not schedule notification")
+                return
+            }
+            
+            let triggerComponents = calendar.dateComponents(
+                [.year, .month, .day, .hour, .minute],
+                from: reminderDate
+            )
+            
+            let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
+            
+            let content = UNMutableNotificationContent()
+            content.title = "Task Reminder"
+            content.body = "You have a task today: \(taskName)"
+            content.sound = .default
+            
+            let request = UNNotificationRequest(
+                identifier: UUID().uuidString,
+                content: content,
+                trigger: trigger
+            )
+            
+            center.add(request) { error in
+                if let error = error {
+                    print("❌ Failed to schedule: \(error.localizedDescription)")
+                } else {
+                    print("✅ Notification scheduled for \(reminderDate) for task: \(taskName)")
+                }
             }
         }
     }

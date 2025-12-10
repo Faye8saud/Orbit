@@ -43,7 +43,7 @@ struct TaskTypeButton: View {
             
             Text(NSLocalizedString(label, comment: ""))
                 .font(.system(size: 18))
-                .foregroundColor(.btn)
+                .foregroundColor(.text)
         }
     }
 }
@@ -92,9 +92,8 @@ struct sheetView: View {
     
     @Binding var navigateHome: Bool
     init(navigateHome: Binding<Bool> = .constant(false)) {
-           _navigateHome = navigateHome
-       }
-
+        _navigateHome = navigateHome
+    }
     
     @State private var selectedType: String? = "meeting"
     @State private var currentStep: Int = 1
@@ -130,8 +129,6 @@ struct sheetView: View {
         } message: {
             Text(NSLocalizedString(alertMessage, comment: ""))
         }
-        
-        
     }
     
     // MARK: - Step 1 View
@@ -165,9 +162,11 @@ struct sheetView: View {
                 currentStep = 2
             } label: {
                 Text("Next")
+         
                     .font(.system(size: 18, weight: .semibold))
                     .frame(width: 200, height: 70)
-                    .background(Color("btnColor"))
+              //      .background(Color("btnColor"))
+                    .glassEffect(.regular.tint(.btn))
                     .foregroundColor(.white)
                     .cornerRadius(40)
                     .shadow(color: Color("btnColor").opacity(0.25),
@@ -181,6 +180,23 @@ struct sheetView: View {
         )
         .padding(.top, 70)
     }
+    
+    // MARK: - Priority Selection UI
+    var prioritySelectionView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Priority")
+                .font(.system(size: 17, weight: .semibold))
+                .padding(.leading, -20)
+
+            HStack(spacing: 30) {
+                priorityCircle(priority: 3, size: 60, typeID: selectedType)
+                priorityCircle(priority: 2, size: 80, typeID: selectedType)
+                priorityCircle(priority: 1, size: 110, typeID: selectedType)
+            }
+            .padding(.vertical, -10)
+        }
+    }
+
     
     // MARK: - Step 2 View
     var taskDetailsView: some View {
@@ -288,13 +304,17 @@ struct sheetView: View {
                         Text("Save")
                             .font(.system(size: 18, weight: .semibold))
                             .frame(width: 200, height: 70)
-                            .background(Color("btnColor"))
+                          
+                           .background(Color("btnColor"))
                             .foregroundColor(.white)
+                          
+                            
                             .cornerRadius(40)
                             .shadow(color: Color("btnColor").opacity(0.25),
                                     radius: 10, x: 0, y: 2)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
+                    
                     .padding(.top, 5)
                 }
                 .padding()
@@ -320,7 +340,7 @@ struct sheetView: View {
             return false
         }
         
-        // Combine date and time - FIXED VERSION
+        // Combine date and time
         let calendar = Calendar.current
         let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
         let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
@@ -360,6 +380,13 @@ struct sheetView: View {
         do {
             try context.save()
             print("Task saved successfully: \(newTask.name) at \(finalDate)")
+            
+            // ⏰ هنا نحدد تنبيه الساعة 9 صباح يوم المهمة
+            NotificationManager.shared.scheduleTaskReminder(
+                taskName: newTask.name,
+                date: finalDate
+            )
+            
             return true
         } catch {
             alertMessage = "alert.saveFailed"

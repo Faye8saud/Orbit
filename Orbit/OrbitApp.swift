@@ -10,9 +10,9 @@ import UIKit
 @main
 struct OrbitApp: App {
     
-    init() {
-        UIView.appearance().overrideUserInterfaceStyle = .light
-    }
+//    init() {
+//        UIView.appearance().overrideUserInterfaceStyle = .light
+//    }
     
     @State private var showSplash = true
     
@@ -32,7 +32,7 @@ struct OrbitApp: App {
                     OnboardingView()
                 }
             }
-            .preferredColorScheme(.light)
+//            .preferredColorScheme(.light)
         }
         .modelContainer(for: TaskModel.self)
     }
