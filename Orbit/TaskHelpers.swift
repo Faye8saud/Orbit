@@ -19,7 +19,7 @@ struct TaskHelpers {
     }
     
     static let allTypes: [String: TypeConfig] = [
-        "work": TypeConfig(id: "work", icon: "doc.fill", labelKey: "Task.work", color: .yellowc),
+        "work": TypeConfig(id: "work", icon: "doc.fill", labelKey: "Task.Work", color: .yellowc),
         "health": TypeConfig(id: "health", icon: "heart.text.clipboard.fill", labelKey: "Task.health", color: .darkpinkc),
         "personal": TypeConfig(id: "personal", icon: "person.fill", labelKey: "Task.personal", color: .pinkc),
         "home": TypeConfig(id: "home", icon: "house.fill", labelKey: "Task.home", color: .lightbluec),

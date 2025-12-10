@@ -140,7 +140,7 @@ struct sheetView: View {
             
             HStack(spacing: 60) {
                 VStack {
-                    typeButton(icon: "doc.fill", label: "Task.Work", color: .yellowc, id: "Work", selectedType: $selectedType)
+                    typeButton(icon: "doc.fill", label: "Task.Work", color: .yellowc, id: "work", selectedType: $selectedType)
                 }
                 VStack {
                     typeButton(icon: "heart.text.clipboard.fill", label: "Task.Health", color: .darkpinkc, id: "health", selectedType: $selectedType)
@@ -182,7 +182,7 @@ struct sheetView: View {
     }
     
     // MARK: - Priority Selection UI
-    var prioritySelectionView: some View {
+ /*   var prioritySelectionView: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Priority")
                 .font(.system(size: 17, weight: .semibold))
@@ -196,6 +196,7 @@ struct sheetView: View {
             .padding(.vertical, -10)
         }
     }
+    */
 
     
     // MARK: - Step 2 View
@@ -329,7 +330,7 @@ struct sheetView: View {
     @discardableResult
     private func saveTask() -> Bool {
         guard !name.trimmingCharacters(in: .whitespaces).isEmpty else {
-            alertMessage = "Please enter the task name"
+            alertMessage = "alert.taskNameRequired"
             showAlert = true
             return false
         }
