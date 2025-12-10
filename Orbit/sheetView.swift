@@ -43,7 +43,7 @@ struct TaskTypeButton: View {
             
             Text(label)
                 .font(.system(size: 18))
-                .foregroundColor(.btn)
+                .foregroundColor(.text)
         }
     }
 }
@@ -198,9 +198,11 @@ struct sheetView: View {
                 currentStep = 2
             } label: {
                 Text("Next")
+         
                     .font(.system(size: 18, weight: .semibold))
                     .frame(width: 200, height: 70)
-                    .background(Color("btnColor"))
+              //      .background(Color("btnColor"))
+                    .glassEffect(.regular.tint(.btn))
                     .foregroundColor(.white)
                     .cornerRadius(40)
                     .shadow(color: Color("btnColor").opacity(0.25),
@@ -337,13 +339,17 @@ struct sheetView: View {
                         Text("Save")
                             .font(.system(size: 18, weight: .semibold))
                             .frame(width: 200, height: 70)
-                            .background(Color("btnColor"))
+                          
+                           .background(Color("btnColor"))
                             .foregroundColor(.white)
+                          
+                            
                             .cornerRadius(40)
                             .shadow(color: Color("btnColor").opacity(0.25),
                                     radius: 10, x: 0, y: 2)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
+                    
                     .padding(.top, 5)
                 }
                 .padding()

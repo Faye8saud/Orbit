@@ -70,7 +70,7 @@ struct mainHomeView: View {
                             .frame(width: 150, height: 55)
                             .background(
                                 RoundedRectangle(cornerRadius: 28)
-                                    .fill(.white.opacity(0.8))
+                                    .fill(.background.opacity(0.8))
                                     .blur(radius: 0.5)
                             )
                             .glassEffect(.regular.tint(.lightyellow))
@@ -151,12 +151,12 @@ struct mainHomeView: View {
                         // Date + Time
                         Text(Date().todayString)
                             .font(.system(size: 30, weight: .medium))
-                            .foregroundColor(Color.btn.opacity(0.8))
+                            .foregroundColor(.text)
                             .offset(y: -20)
 
                         Text(Date().timeString)
                             .font(.system(size: 20))
-                            .foregroundColor(Color.btn)
+                            .foregroundColor(.text)
                             .offset(y: -10)
                     }
                     .padding(.bottom, 50)

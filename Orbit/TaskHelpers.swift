@@ -22,7 +22,7 @@ struct TaskHelpers {
         "work": TypeConfig(id: "work", icon: "doc.fill", label: "عمل", color: .yellowc),
         "health": TypeConfig(id: "health", icon: "heart.text.clipboard.fill", label: "صحة", color: .darkpinkc),
         "personal": TypeConfig(id: "personal", icon: "person.fill", label: "شخصي", color: .pinkc),
-        "home": TypeConfig(id: "home", icon: "house.fill", label: "منزل", color: .btn),
+        "home": TypeConfig(id: "home", icon: "house.fill", label: "منزل", color: .lightbluec),
         "other": TypeConfig(id: "other", icon: "ellipsis", label: "اخرى", color: .lighghtGreenc)
     ]
     

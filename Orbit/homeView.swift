@@ -207,7 +207,7 @@ struct HomeView: View {
 
             Text(Date().todayString)
                 .font(.system(size: 32, weight: .medium))
-                .foregroundColor(Color.black.opacity(0.7))
+                .foregroundColor(.text)
 
             // Circular menu buttons
             CircularMenuView(items: menuItems)
