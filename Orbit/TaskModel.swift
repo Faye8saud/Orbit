@@ -20,6 +20,9 @@ class TaskModel: Identifiable {
     var actionType: String   // example: "openProfile", "openTasks"
     var date: Date
     
+    var isExpired: Bool {
+        return date < Date()
+    }
     // Computed properties using TaskHelpers
     var icon: String {
         TaskHelpers.icon(for: type)

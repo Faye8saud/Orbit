@@ -23,20 +23,18 @@ struct MenuItem: Identifiable {
 extension Date {
     var todayString: String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US")
-        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale.current  // ← use system language
         formatter.dateFormat = "d MMMM"
         return formatter.string(from: self)
     }
+    
     var timeString: String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US")
-        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale.current  // ← use system language
         formatter.dateFormat = "hh:mm a"
         return formatter.string(from: self)
     }
 }
-
 // MARK: - Circular Menu View
 struct CircularMenuView: View {
     let items: [MenuItem]
@@ -44,7 +42,8 @@ struct CircularMenuView: View {
     var body: some View {
         ZStack {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-                let angle = Angle.degrees(Double(index) / Double(items.count) * 360)
+                let angle = Angle.degrees(Double(index) / Double(items.count) * 360 - 90)
+
 
                 Button(action: item.action) {
                     ZStack {
@@ -81,15 +80,16 @@ struct HomeView: View {
 
     // Convert tasks to menu items
     private var menuItems: [MenuItem] {
-        todaysTasks.map { task in
+        let sortedTasks = todaysTasks.sorted { $0.date < $1.date } // SORT BY TIME
+
+        return sortedTasks.enumerated().map { _, task in
             MenuItem(
                 icon: task.icon,
-                color: task.taskColor,
+                color: task.isExpired ? .gray.opacity(0.5) : task.taskColor,
                 size: CGFloat(task.size),
                 distance: CGFloat(task.distance),
                 action: {
                     selectedTask = task
-                    // TODO: Navigate to task detail
                 }
             )
         }
@@ -140,7 +140,7 @@ struct HomeView: View {
                             ZStack {
                                 Circle()
                                     .fill(Color("btnColor"))
-                                    .frame(width: 90, height: 90)
+                                    .frame(width: 70, height: 70)
                                     .shadow(color: Color("btnColor").opacity(0.25),
                                             radius: 10, x: 0, y: 2)
 

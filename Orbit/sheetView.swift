@@ -10,7 +10,7 @@ import SwiftData
 
 struct TaskTypeButton: View {
     let icon: String
-    let label: String
+    let label: String // now labelKey instead of string literal
     let isSelected: Bool
     let color: Color
     let action: () -> Void
@@ -41,7 +41,7 @@ struct TaskTypeButton: View {
                 }
             }
             
-            Text(label)
+            Text(NSLocalizedString(label, comment: ""))
                 .font(.system(size: 18))
                 .foregroundColor(.btn)
         }
@@ -126,9 +126,9 @@ struct sheetView: View {
             .animation(.easeInOut, value: currentStep)
         }
         .alert("Alert", isPresented: $showAlert) {
-            Button("Okey", role: .cancel) { }
+            Button("Okay", role: .cancel) { }
         } message: {
-            Text(alertMessage)
+            Text(NSLocalizedString(alertMessage, comment: ""))
         }
         
         
@@ -143,23 +143,23 @@ struct sheetView: View {
             
             HStack(spacing: 60) {
                 VStack {
-                    typeButton(icon: "doc.fill", label: "Work", color: .darkpinkc, id: "Work", selectedType: $selectedType)
+                    typeButton(icon: "doc.fill", label: "Task.Work", color: .yellowc, id: "Work", selectedType: $selectedType)
                 }
                 VStack {
-                    typeButton(icon: "person.3.fill", label: "Meeting", color: .yellowc, id: "meeting", selectedType: $selectedType)
+                    typeButton(icon: "heart.text.clipboard.fill", label: "Task.Health", color: .darkpinkc, id: "health", selectedType: $selectedType)
                 }
             }
             
             HStack(spacing: 60) {
                 VStack {
-                    typeButton(icon: "person.fill", label: "Personal", color: .pinkc, id: "personal", selectedType: $selectedType)
+                    typeButton(icon: "person.fill", label: "Task.Personal", color: .pinkc, id: "personal", selectedType: $selectedType)
                 }
                 VStack {
-                    typeButton(icon: "house.fill", label: "Home", color: .lightbluec, id: "home", selectedType: $selectedType)
+                    typeButton(icon: "house.fill", label: "Task.Home", color: .lightbluec, id: "home", selectedType: $selectedType)
                 }
             }
             
-            typeButton(icon: "ellipsis", label: "Other", color: .lighghtGreenc, id: "other", selectedType: $selectedType)
+            typeButton(icon: "ellipsis", label: "Task.Other", color: .lighghtGreenc, id: "other", selectedType: $selectedType)
             
             Button {
                 currentStep = 2
@@ -315,7 +315,7 @@ struct sheetView: View {
         }
         
         guard let taskType = selectedType else {
-            alertMessage = "Please select the task type"
+            alertMessage = "alert.taskTypeRequired"
             showAlert = true
             return false
         }
@@ -333,14 +333,14 @@ struct sheetView: View {
         combinedComponents.minute = timeComponents.minute
         
         guard let finalDate = calendar.date(from: combinedComponents) else {
-            alertMessage = "Invalid date/time combination"
+            alertMessage = "alert.invalidDate"
             showAlert = true
             return false
         }
   
         // Validate that the task is in the future
         if finalDate <= Date() {
-            alertMessage = "Please select a future date and time"
+            alertMessage = "alert.futureDateRequired"
             showAlert = true
             return false
         }
@@ -362,7 +362,7 @@ struct sheetView: View {
             print("Task saved successfully: \(newTask.name) at \(finalDate)")
             return true
         } catch {
-            alertMessage = "Error saving task: \(error.localizedDescription)"
+            alertMessage = "alert.saveFailed"
             showAlert = true
             print("Error saving task: \(error)")
             return false

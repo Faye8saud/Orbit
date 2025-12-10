@@ -14,33 +14,36 @@ struct TaskHelpers {
     struct TypeConfig {
         let id: String
         let icon: String
-        let label: String
+        let labelKey: String
         let color: Color
     }
     
     static let allTypes: [String: TypeConfig] = [
-        "work": TypeConfig(id: "work", icon: "doc.fill", label: "عمل", color: .yellowc),
-        "health": TypeConfig(id: "health", icon: "heart.text.clipboard.fill", label: "صحة", color: .darkpinkc),
-        "personal": TypeConfig(id: "personal", icon: "person.fill", label: "شخصي", color: .pinkc),
-        "home": TypeConfig(id: "home", icon: "house.fill", label: "منزل", color: .btn),
-        "other": TypeConfig(id: "other", icon: "ellipsis", label: "اخرى", color: .lighghtGreenc)
+        "work": TypeConfig(id: "work", icon: "doc.fill", labelKey: "Task.work", color: .yellowc),
+        "health": TypeConfig(id: "health", icon: "heart.text.clipboard.fill", labelKey: "Task.health", color: .darkpinkc),
+        "personal": TypeConfig(id: "personal", icon: "person.fill", labelKey: "Task.personal", color: .pinkc),
+        "home": TypeConfig(id: "home", icon: "house.fill", labelKey: "Task.home", color: .lightbluec),
+        "other": TypeConfig(id: "other", icon: "ellipsis", labelKey: "Task.other", color: .lighghtGreenc)
     ]
+
     
     // MARK: - Helper Methods
     
     static func icon(for type: String) -> String {
-        allTypes[type]?.icon ?? "questionmark.circle"
+        let normalized = type.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        return allTypes[normalized]?.icon ?? "questionmark.circle"
     }
 
     static func color(for type: String) -> Color {
-        allTypes[type]?.color ?? .gray
+        let normalized = type.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        return allTypes[normalized]?.color ?? .gray
     }
 
     static func size(for priority: Int) -> Double {
         switch priority {
-        case 1: return 95
-        case 2: return 65
-        default: return 45
+        case 1: return 90
+        case 2: return 90
+        default: return 90
         }
     }
 }

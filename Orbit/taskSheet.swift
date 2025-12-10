@@ -67,7 +67,8 @@ struct taskSheet: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.btn.opacity(0.4), lineWidth: 1.5)
                     )
-                Text("Time: \(task.date.formatted(date: .omitted, time: .shortened))")
+                Text("\(NSLocalizedString("time.label", comment: "")): \(task.date.formatted(date: .omitted, time: .shortened))")
+
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.btn)                                .multilineTextAlignment(.trailing)
                     .padding(10)
@@ -93,7 +94,7 @@ struct taskSheet: View {
                     
                     VStack(alignment: .trailing) {
                         if task.desc.isEmpty {
-                            Text("No Description")
+                            Text("No_Description")
                                 .foregroundColor(Color.btn)
                         } else {
                             Text(task.desc)
@@ -120,7 +121,7 @@ struct taskSheet: View {
             Button(role: .destructive) {
                 showDeleteConfirm = true
             } label: {
-                Text("Delete task")
+                Text("Deleteـtask")
                     .font(SwiftUI.Font.system(size: 20, weight: .regular))
                     .frame(maxWidth: 200)
                     .padding(20)
@@ -136,14 +137,17 @@ struct taskSheet: View {
                 descriptionText = task.desc   //  loads task description into the state
             
             }
-        .alert("Are you sure?", isPresented: $showDeleteConfirm) {
-            Button("Delete", role: .destructive) {
+        .alert(
+            NSLocalizedString("alert.delete.title", comment: ""),
+            isPresented: $showDeleteConfirm
+        ) {
+            Button(NSLocalizedString("alert.delete.button", comment: ""), role: .destructive) {
                 deleteTask()
             }
 
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("this task will be deleted entirely")
+            Text("delete_msg")
         }
     }
     private func descriptionSpeakTapped() {
