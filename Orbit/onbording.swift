@@ -151,7 +151,7 @@ struct OnboardingView: View {
                                             radius: 10, x: 0, y: 2)
                             }
                             
-                            Spacer()
+                            Spacer(minLength: 50)
                         }
                     }
                 }
