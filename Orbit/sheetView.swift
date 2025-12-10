@@ -65,6 +65,7 @@ struct TaskTypeCircle: View {
             .padding(-10)
     }
 }
+
 @ViewBuilder
 func typeButton(
     icon: String,
@@ -91,9 +92,8 @@ struct sheetView: View {
     
     @Binding var navigateHome: Bool
     init(navigateHome: Binding<Bool> = .constant(false)) {
-           _navigateHome = navigateHome
-       }
-
+        _navigateHome = navigateHome
+    }
     
     @State private var selectedType: String? = "meeting"
     @State private var currentStep: Int = 1
@@ -112,8 +112,7 @@ struct sheetView: View {
     private func priorityCircle(priority: Int, size: CGFloat, typeID: String?) -> some View {
         
         let config = TaskHelpers.allTypes[typeID ?? ""]
-
-
+        
         Button {
             selectedPriority = priority
         } label: {
@@ -163,8 +162,6 @@ struct sheetView: View {
         } message: {
             Text(alertMessage)
         }
-        
-        
     }
     
     // MARK: - Step 1 View
@@ -223,7 +220,6 @@ struct sheetView: View {
                 .padding(.leading, -20)
 
             HStack(spacing: 30) {
-                // High
                 priorityCircle(priority: 3, size: 60, typeID: selectedType)
                 priorityCircle(priority: 2, size: 80, typeID: selectedType)
                 priorityCircle(priority: 1, size: 110, typeID: selectedType)
@@ -243,21 +239,15 @@ struct sheetView: View {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 18, weight: .bold))
                                 .foregroundColor(.btn)
-                           
                         }
                         .padding(.vertical, 15)
                         .padding(.horizontal, 18)
-                      //  .glassEffect(.regular.tint(.btn).interactive())
-                      //  .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
                     .padding(.leading, 4)
                     .padding(.top, 15)
                     Spacer()
-                        //.padding(.top,30)
-                        //.padding(.horizontal,30)
                 }
 
-               
                 prioritySelectionView
                 
                 VStack(spacing: 20) {
@@ -274,25 +264,22 @@ struct sheetView: View {
                             )
                     }
                     
-                   
                     HStack(spacing: 20){
-                            Text("Date")
-                                .multilineTextAlignment(.leading)
-                                .font(.system(size: 16 , weight: .semibold))
-                            
-                            DatePicker(
-                                "",
-                                selection: $date,
-                                displayedComponents: .date
-                            )
-                            .labelsHidden()
-                            .datePickerStyle(.compact)
-                            .tint(.btn)
-                           
-                           Spacer()
+                        Text("Date")
+                            .multilineTextAlignment(.leading)
+                            .font(.system(size: 16 , weight: .semibold))
+                        
+                        DatePicker(
+                            "",
+                            selection: $date,
+                            displayedComponents: .date
+                        )
+                        .labelsHidden()
+                        .datePickerStyle(.compact)
+                        .tint(.btn)
+                        
+                        Spacer()
                     }
-                    //.padding(.leading, 5)
-                    
                     
                     VStack(alignment: .leading, spacing: 70) {
                         Text("Time")
@@ -305,7 +292,6 @@ struct sheetView: View {
                         )
                         .labelsHidden()
                         .datePickerStyle(.wheel)
-                        //.frame(height: 90)
                         .scaleEffect(0.85)
                         .frame(height: 30)
                         
@@ -369,7 +355,7 @@ struct sheetView: View {
             return false
         }
         
-        // Combine date and time - FIXED VERSION
+        // Combine date and time
         let calendar = Calendar.current
         let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
         let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
@@ -409,6 +395,13 @@ struct sheetView: View {
         do {
             try context.save()
             print("Task saved successfully: \(newTask.name) at \(finalDate)")
+            
+            // ⏰ هنا نحدد تنبيه الساعة 9 صباح يوم المهمة
+            NotificationManager.shared.scheduleTaskReminder(
+                taskName: newTask.name,
+                date: finalDate
+            )
+            
             return true
         } catch {
             alertMessage = "Error saving task: \(error.localizedDescription)"
