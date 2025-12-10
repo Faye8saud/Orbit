@@ -4,7 +4,6 @@
 //
 //  Created by Samar A on 08/06/1447 AH.
 //
-
 import SwiftUI
 
 struct OnboardingView: View {
@@ -19,11 +18,10 @@ struct OnboardingView: View {
             title: "",
             description: "Swipe out • view all • tasks clearly",
             image: Image("image2")
-    )
+        )
     ]
     
     @State private var currentPage: Int = 0
-    @State private var selectedThemeIndex: Int = 0
     @State private var showCalendar: Bool = false
     
     private var lastIndex: Int {
@@ -44,11 +42,11 @@ struct OnboardingView: View {
                 .ignoresSafeArea(edges: .bottom)
             
             VStack {
-                
-                
+                // MARK: - Skip
                 HStack {
                     Spacer()
                     Button {
+                        NotificationManager.shared.requestAuthorizationIfNeeded()
                         showCalendar = true
                     } label: {
                         Text("Skip")
@@ -59,10 +57,8 @@ struct OnboardingView: View {
                 .padding(.top, 20)
                 .padding(.trailing, 20)
                 
-                
                 TabView(selection: $currentPage) {
                     ForEach(0 ..< pages.count, id: \.self) { index in
-                        
                         VStack(spacing: 20) {
                             Spacer()
                             
@@ -90,9 +86,9 @@ struct OnboardingView: View {
                 
                 Spacer()
                 
-                
                 VStack(spacing: 20) {
                     
+                    // Dots
                     HStack(spacing: 8) {
                         ForEach(0 ..< pages.count, id: \.self) { index in
                             Capsule()
@@ -111,7 +107,6 @@ struct OnboardingView: View {
                         }
                     }
                     .padding(.bottom, 30)
-                    
                     
                     if currentPage != lastIndex {
                         HStack {
@@ -138,12 +133,12 @@ struct OnboardingView: View {
                             .shadow(color: Color("btnColor").opacity(0.25),
                                     radius: 10, x: 0, y: 2)
                         }
-                        
                     } else {
                         HStack {
                             Spacer()
                             
                             Button {
+                                NotificationManager.shared.requestAuthorizationIfNeeded()
                                 showCalendar = true
                             } label: {
                                 Text("Start")
@@ -155,7 +150,9 @@ struct OnboardingView: View {
                                     .shadow(color: Color("btnColor").opacity(0.25),
                                             radius: 10, x: 0, y: 2)
                             }
-                            .frame(maxWidth: .infinity, alignment: .center)                        }
+                            
+                            Spacer()
+                        }
                     }
                 }
                 .padding(.horizontal, 40)
