@@ -208,7 +208,7 @@ struct sheetView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.btn)
+                                .foregroundColor(Color("arrow"))
                            
                         }
                         .foregroundColor(.white)
@@ -383,10 +383,13 @@ struct sheetView: View {
             print("Task saved successfully: \(newTask.name) at \(finalDate)")
             
             // ⏰ هنا نحدد تنبيه الساعة 9 صباح يوم المهمة
+            // بعد الحفظ
             NotificationManager.shared.scheduleTaskReminder(
+                taskId: newTask.id.uuidString,   // عدلي حسب TaskModel عندك
                 taskName: newTask.name,
                 date: finalDate
             )
+
             
             return true
         } catch {

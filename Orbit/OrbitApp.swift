@@ -5,35 +5,34 @@
 //  Created by Fay  on 19/11/2025.
 import SwiftUI
 import SwiftData
-import UIKit
 
 @main
 struct OrbitApp: App {
-    
-//    init() {
-//        UIView.appearance().overrideUserInterfaceStyle = .light
-//    }
-    
     @State private var showSplash = true
-    
+    @AppStorage("didFinishOnboarding") private var didFinishOnboarding = false
+
     var body: some Scene {
         WindowGroup {
             ZStack {
                 if showSplash {
                     SplashView()
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
-                                withAnimation {
-                                    showSplash = false
-                                }
-                            }
-                        }
                 } else {
-                    OnboardingView()
+                    if didFinishOnboarding {
+                        mainHomeView()
+                    } else {
+                        OnboardingView()
+                    }
                 }
             }
-//            .preferredColorScheme(.light)
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        showSplash = false
+                    }
+                }
+            }
         }
         .modelContainer(for: TaskModel.self)
     }
 }
+

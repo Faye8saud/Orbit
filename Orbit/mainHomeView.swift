@@ -11,6 +11,9 @@ struct mainHomeView: View {
     @State private var navigate = false
     @State private var addTaskSheet = false
     @State private var selectedTask: TaskModel? = nil
+    
+    // ✅ NEW: Zoom-out animation state
+    @State private var zoomOut = false
 
     @Environment(\.modelContext) private var context
     @Query(sort: \TaskModel.date) private var allTasks: [TaskModel]
@@ -63,7 +66,17 @@ struct mainHomeView: View {
             VStack {
                 Spacer().frame(height: 300)
                 if !todaysTasks.isEmpty {
-                    Button { navigate = true } label: {
+                    Button {
+                        // ✅ NEW: start zoom-out animation
+                        withAnimation(.easeInOut(duration: 0.55)) {
+                            zoomOut = true
+                        }
+                        
+                        // ✅ NEW: navigate after animation starts
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.40) {
+                            navigate = true
+                        }
+                    } label: {
                         Image(systemName: "minus.magnifyingglass")
                             .font(.system(size: 30, weight: .medium))
                             .foregroundColor(Color.btn.opacity(0.8))
@@ -105,6 +118,10 @@ struct mainHomeView: View {
                             .frame(width: 500, height: 550)
                             .blur(radius: 1)
                             .offset(y: 520)
+                        
+                            // ✅ NEW: zoom-out effect for the circle
+                            .scaleEffect(zoomOut ? 0.65 : 1.0, anchor: .bottom)
+                            .opacity(zoomOut ? 0.4 : 1.0)
                     }
                     .edgesIgnoringSafeArea(.bottom)
 
@@ -160,6 +177,10 @@ struct mainHomeView: View {
                             .offset(y: -10)
                     }
                     .padding(.bottom, 50)
+                    
+                    // ✅ OPTIONAL: move & fade content slightly too (feel free to remove)
+                    .offset(y: zoomOut ? 30 : 0)
+                    .opacity(zoomOut ? 0.7 : 1.0)
                 }
             }
         }
@@ -177,6 +198,12 @@ struct mainHomeView: View {
         .navigationDestination(isPresented: $navigate) {
             HomeView()
         }
+        // ✅ NEW: reset animation when coming back
+        .onChange(of: navigate) { _, newValue in
+            if newValue == false {
+                zoomOut = false
+            }
+        }
         }
     }
 }
@@ -184,4 +211,3 @@ struct mainHomeView: View {
 #Preview {
     mainHomeView()
 }
-

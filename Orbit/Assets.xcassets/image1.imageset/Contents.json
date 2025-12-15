@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "w1.png",
+      "filename" : "Functional icons with muted colors 1.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -12,11 +12,12 @@
           "value" : "dark"
         }
       ],
-      "filename" : "onboarding.png",
+      "filename" : "ChatGPT Image Dec 15, 2025 at 10_13_06 PM.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Functional icons with muted colors.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -27,6 +28,7 @@
           "value" : "dark"
         }
       ],
+      "filename" : "ChatGPT Image Dec 15, 2025 at 10_13_06 PM 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
