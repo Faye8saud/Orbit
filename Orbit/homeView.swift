@@ -23,18 +23,19 @@ struct MenuItem: Identifiable {
 extension Date {
     var todayString: String {
         let formatter = DateFormatter()
-        formatter.locale = Locale.current  // ← use system language
+        formatter.locale = Locale.current
         formatter.dateFormat = "d MMMM"
         return formatter.string(from: self)
     }
-    
+
     var timeString: String {
         let formatter = DateFormatter()
-        formatter.locale = Locale.current  // ← use system language
+        formatter.locale = Locale.current
         formatter.dateFormat = "hh:mm a"
         return formatter.string(from: self)
     }
 }
+
 // MARK: - Circular Menu View
 struct CircularMenuView: View {
     let items: [MenuItem]
@@ -43,7 +44,6 @@ struct CircularMenuView: View {
         ZStack {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                 let angle = Angle.degrees(Double(index) / Double(items.count) * 360 - 90)
-
 
                 Button(action: item.action) {
                     ZStack {
@@ -56,6 +56,7 @@ struct CircularMenuView: View {
                             .font(.system(size: item.size * 0.28, weight: .bold))
                     }
                 }
+                .buttonStyle(.plain)
                 .offset(
                     x: cos(CGFloat(angle.radians)) * item.distance,
                     y: sin(CGFloat(angle.radians)) * item.distance
@@ -73,24 +74,20 @@ struct HomeView: View {
     @State private var showSheet = false
     @State private var selectedTask: TaskModel? = nil
 
-     var todaysTasks: [TaskModel] {
+    var todaysTasks: [TaskModel] {
         let cal = Calendar.current
         return allTasks.filter { cal.isDate($0.date, inSameDayAs: Date()) }
     }
 
-    // Convert tasks to menu items
     private var menuItems: [MenuItem] {
-        let sortedTasks = todaysTasks.sorted { $0.date < $1.date } // SORT BY TIME
-
-        return sortedTasks.enumerated().map { _, task in
+        let sortedTasks = todaysTasks.sorted { $0.date < $1.date }
+        return sortedTasks.map { task in
             MenuItem(
                 icon: task.icon,
                 color: task.isExpired ? .gray.opacity(0.5) : task.taskColor,
                 size: CGFloat(task.size),
                 distance: CGFloat(task.distance),
-                action: {
-                    selectedTask = task
-                }
+                action: { selectedTask = task }
             )
         }
     }
@@ -101,6 +98,7 @@ struct HomeView: View {
                 Color(.background)
                     .ignoresSafeArea()
 
+                // ✅ Calendar button (Top Right) — FIXED
                 VStack {
                     HStack {
                         Spacer()
@@ -116,26 +114,27 @@ struct HomeView: View {
                                 .clipShape(Circle())
                                 .shadow(color: .black.opacity(0.25),
                                         radius: 4, x: 0, y: 2)
+                                .contentShape(Circle())
                         }
-                        .padding(.top, 0)
+                        .buttonStyle(.plain)
+                        .zIndex(999)
                         .padding(.trailing, 20)
-                         .offset(y: -50)
+                        .padding(.top, -30)
                     }
+
                     Spacer()
                 }
 
-                // Center circle with date and tasks
                 centerCircleView
 
-                // Bottom plus button
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
 
-                        Button(action: {
+                        Button {
                             showSheet = true
-                        }) {
+                        } label: {
                             ZStack {
                                 Circle()
                                     .fill(Color("btnColor"))
@@ -148,14 +147,13 @@ struct HomeView: View {
                                     .foregroundColor(.white)
                             }
                         }
+                        .buttonStyle(.plain)
                         .padding(.trailing, 20)
                         .padding(.bottom, 30)
                     }
                 }
             }
         }
-       
-        
         .sheet(isPresented: $showSheet) {
             sheetView()
                 .presentationDetents([.large])
@@ -171,7 +169,6 @@ struct HomeView: View {
         }
     }
 
-   
     private var centerCircleView: some View {
         ZStack {
             Circle()
@@ -209,12 +206,10 @@ struct HomeView: View {
                 .font(.system(size: 32, weight: .medium))
                 .foregroundColor(.text)
 
-            // Circular menu buttons
             CircularMenuView(items: menuItems)
         }
     }
 
-    // MARK: - Debug Helper
     private func printTaskDebugInfo() {
         print("📊 Total tasks in database: \(allTasks.count)")
         print("📅 Today's tasks: \(todaysTasks.count)")
@@ -222,7 +217,6 @@ struct HomeView: View {
         for task in allTasks {
             print("  - \(task.name) | Type: \(task.type) | Date: \(task.date)")
         }
-        
     }
 }
 
@@ -230,4 +224,3 @@ struct HomeView: View {
     HomeView()
         .modelContainer(for: TaskModel.self)
 }
-
