@@ -101,7 +101,6 @@ struct HomeView: View {
                 Color(.background)
                     .ignoresSafeArea()
 
-                // 🔼 Top calendar button
                 VStack {
                     HStack {
                         Spacer()
@@ -155,7 +154,8 @@ struct HomeView: View {
                 }
             }
         }
-        // 👇 keep your sheets & onAppear outside NavigationStack
+       
+        
         .sheet(isPresented: $showSheet) {
             sheetView()
                 .presentationDetents([.large])
@@ -171,7 +171,7 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Center Circle View
+   
     private var centerCircleView: some View {
         ZStack {
             Circle()

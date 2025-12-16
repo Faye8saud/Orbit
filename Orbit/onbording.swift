@@ -76,6 +76,7 @@ struct OnboardingView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: 350)
+                                .background(Color.clear)
 
                             Text(NSLocalizedString(pages[index].titleKey, comment: ""))
                                 .font(.title)
